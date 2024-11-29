@@ -1,8 +1,7 @@
 import json
-#from urllib.parse import quote
 
-archivoL = 'datos/ComunitatValenciana.json'
-archivoR = 'datos/auxiliar_CV.json'
+archivoL = 'C:/Users/usuario/Documents/00 Universidad/GII 24-25/A - IEI - Integración e interoperabilidad/Laboratorio/ComunitatValenciana_a_json.json'
+archivoR = 'C:/Users/usuario/Documents/00 Universidad/GII 24-25/A - IEI - Integración e interoperabilidad/Laboratorio/ComunitatValenciana_para_Quino.json'
 lista = []
 
 @staticmethod
@@ -12,8 +11,16 @@ def tipo(denominacion, clasificacion, categoria):
         elif not categoria == "ERROR_404_NO_ENCONTRADO":
             if categoria == "Zona arqueológica" or categoria == "Zona paleontológica":
                 return "Yacimiento arqueológico"
+            elif denominacion.startswith("Torre") or denominacion.startswith("Castillo") or denominacion.startswith("Castellet") or denominacion.startswith("Castell ") or ("Fortaleza" in denominacion and clasificacion == "Monumento"):
+                return "Castillo-Fortaleza-Torre"
+            elif denominacion.startswith("Escudo") or denominacion.startswith("Emblema") or clasificacion == "Archiva":
+                return "Edificio Singular"
+            elif "Puente" in denominacion:
+                return "Puente"
+            elif clasificacion == "Conjunto histórico" or clasificacion == "Jardín histórico" or "Escudo" in denominacion:
+                return "Otros"
             else:
-                return categoria
+                return "ERROR_404_NO_ENCONTRADO"
         elif not clasificacion == "ERROR_404_NO_ENCONTRADO":
             if clasificacion == "Bienes muebles 1ª":
                 return "Otros"
@@ -28,16 +35,14 @@ def tipo(denominacion, clasificacion, categoria):
 
 @staticmethod
 def laDescripcion(clasificacion, categoria):
-    if clasificacion == "ERROR_404_NO_ENCONTRADO":
-        if not categoria == "ERROR_404_NO_ENCONTRADO":
-            return categoria
-        else:
-            return "ERROR_404_NO_ENCONTRADO"
-    elif not categoria == "ERROR_404_NO_ENCONTRADO":
-        return clasificacion
-    else:
+    if clasificacion == "ERROR_404_NO_ENCONTRADO" and categoria == "ERROR_404_NO_ENCONTRADO":
+        return "ERROR_404_NO_ENCONTRADO"
+    elif not categoria == "ERROR_404_NO_ENCONTRADO" and not clasificacion == "ERROR_404_NO_ENCONTRADO":
         return f"{clasificacion} - {categoria}"
-
+    elif not categoria == "ERROR_404_NO_ENCONTRADO":
+        return categoria
+    else:
+        return clasificacion
 
 @staticmethod
 def laClasificacion(codclasificacion, clasificacion):
@@ -50,7 +55,6 @@ def laClasificacion(codclasificacion, clasificacion):
             return "Bienes muebles 1ª"
     else:
         return "ERROR_404_NO_ENCONTRADO"
-
 
 @staticmethod
 def laCategoria(codcategoria, categoria):
@@ -98,93 +102,48 @@ class ComunitatValencianaGuarda:
         self.municipio = municipio
         self.provincia = provincia
 
-def leer_csv(file_path):
-    listb = []
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            lines = file.readlines()
-            for line in lines[1:]:  # Saltar la primera línea (encabezado)
-                partes = line.strip().split(";")
-                if len(partes) == 10:
-                    comunitat = ComunitatValenciana(
-                        partes[0].replace('"', ""),
-                        partes[1].replace('"', ""),
-                        partes[2].replace('"', ""),
-                        partes[3].replace('"', ""),
-                        partes[4].replace('"', ""),
-                        partes[5].replace('"', ""),
-                        partes[6].replace('"', ""),
-                        partes[7].replace('"', ""),
-                        partes[8].replace('"', ""),
-                        partes[9].replace('"', "")
-                    )
-                    listb.append(comunitat)
-    except Exception as e:
-        print(f"Error al leer el archivo CSV: {e}")
-    return listb
-
-
-def generar_json(lista, output_file):
-    try:
-        with open(output_file, 'w', encoding='utf-8') as file:
-            file.write("[\n")
-            for i, comunitat in enumerate(lista):
-                data = comunitat.to_dict()
-                json_entry = "  {\n"
-                json_entry += ",\n".join([f'    "{key}": "{value}"' for key, value in data.items()])
-                json_entry += "\n  }"
-                if i < len(lista) - 1:
-                    json_entry += ","
-                json_entry += "\n"
-                file.write(json_entry)
-            file.write("]\n")
-        print("El archivo JSON ha sido generado con éxito.")
-    except Exception as e:
-        print(f"Error al escribir el archivo JSON: {e}")
-
-
 
 try:
     with open(archivoL, 'r', encoding='utf-8') as file:
         jsonContent = json.load(file)
         for entry in jsonContent:
-            igpcv = entry.get("igpcv", "")
+            igpcv = entry.get("IGPCV", "")
             if igpcv == "":
                 igpcv = "ERROR_404_NO_ENCONTRADO"
 
-            denominacion = entry.get("denominacion", "")
+            denominacion = entry.get("DENOMINACION", "")
             if denominacion == "":
                 denominacion = "ERROR_404_NO_ENCONTRADO"
 
-            provincia = entry.get("provincia", "")
+            provincia = entry.get("PROVINCIA", "")
             if provincia == "":
                 provincia = "ERROR_404_NO_ENCONTRADO"
 
-            municipio = entry.get("municipio", "")
+            municipio = entry.get("MUNICIPIO", "")
             if municipio == "":
                 municipio = "ERROR_404_NO_ENCONTRADO"
 
-            utmeste = entry.get("utmeste", "")
+            utmeste = entry.get("UTMESTE", "")
             if utmeste == "":
                 utmeste = "ERROR_404_NO_ENCONTRADO"
 
-            utmnorte = entry.get("utmnorte", "")
+            utmnorte = entry.get("UTMNORTE", "")
             if utmnorte == "":
                 utmnorte = "ERROR_404_NO_ENCONTRADO"
 
-            codclasificacion = entry.get("codclasificacion", "")
+            codclasificacion = entry.get("CODCLASIFICACION", "")
             if codclasificacion == "":
                 codclasificacion = "ERROR_404_NO_ENCONTRADO"
 
-            clasificacion = entry.get("clasificacion", "")
+            clasificacion = entry.get("CLASIFICACION", "")
             if clasificacion == "":
                 clasificacion = "ERROR_404_NO_ENCONTRADO"
 
-            codcategoria = entry.get("codcategoria", "")
+            codcategoria = entry.get("CODCATEGORIA", "")
             if codcategoria == "":
                 codcategoria = "ERROR_404_NO_ENCONTRADO"
 
-            categoria = entry.get("categoria", "")
+            categoria = entry.get("CATEGORIA", "")
             if categoria == "":
                 categoria = "ERROR_404_NO_ENCONTRADO"
 
