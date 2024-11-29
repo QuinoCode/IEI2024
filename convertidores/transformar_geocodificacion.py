@@ -65,7 +65,7 @@ def transformar_datos_con_geocodificacion(datos_entrada):
             "Localidad": item.get("municipality", ""),
             "Provincia": item.get("territory", "")
         }
-        print(json.dumps(nuevo_item, ensure_ascii=False, indent=4))  # Imprimir el item transformado
+        
         datos_transformados.append(nuevo_item)
     return datos_transformados
 
