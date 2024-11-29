@@ -10,10 +10,10 @@ scrapper_instance.set_up_site()
 #Set up JSON
 file = open('data.json')
 data = json.load(file)
-json_array = data["data"]
 
 # change values to the json
-for monument in json_array:
+for wrapper in data:
+   monument = wrapper["Monumento"]
    monument["longitud"], monument["latitud"] = scrapper_instance.process_data(monument["longitud"], monument["latitud"])
    
 # Write the result in a json file called 'result.json'
