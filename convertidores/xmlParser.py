@@ -31,9 +31,6 @@ with open('datos/CLEdata.json', 'w', encoding='utf-8') as f:
         if codpost is not None :
             codpost = codpost.text
 
-        if int(codpost) > 52999 :
-            continue
-
         poblacion = monumento.find('poblacion')
         if poblacion is not None:
             localidad = poblacion.find('localidad').text
