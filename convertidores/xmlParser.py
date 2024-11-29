@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 import json
+import sys
 
 result = []
 
@@ -28,9 +29,6 @@ def execute(root):
             if codpost is not None :
                 codpost = codpost.text
 
-            if int(codpost) > 52999 :
-                continue
-
             poblacion = monumento.find('poblacion')
             if poblacion is not None:
                 localidad = poblacion.find('localidad').text
@@ -42,7 +40,7 @@ def execute(root):
 
             descripcion = monumento.find('Descripcion')
             if descripcion is not None :
-                descripcion = descripcion.text
+                descripcion = clean(descripcion.text)
 
             tipo = monumento.find('tipoMonumento').text
             tip = typeCheck(tipo)    
@@ -64,7 +62,17 @@ def execute(root):
 
         json.dump(result, f, ensure_ascii=False, indent=4)
 
+def clean(desc):
+    t = desc.replace('<![CDATA[', "")
+    i = t.replace('<p align="justify">', "")
+    u = i.replace('</p>', "")
+    return u.replace(']]>', "")
+
+
 def main(filepath):
     tree = ET.parse(filepath)
     root = tree.getroot()
     execute(root)
+
+if __name__ == '__main__':
+    main('datos/monumentos.xml')
