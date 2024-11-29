@@ -1,4 +1,5 @@
 import json
+import sys
 from scrapper import Scrapper
 
 # Correct initialization of the Scrapper
@@ -8,17 +9,15 @@ scrapper_instance.set_up_site()
 
 
 #Set up JSON
-file = open('data.json')
+file = open(sys.argv[1])
 data = json.load(file)
 
-# change values to the json
+
 for wrapper in data:
    monument = wrapper["Monumento"]
    monument["longitud"], monument["latitud"] = scrapper_instance.process_data(monument["longitud"], monument["latitud"])
-   
-# Write the result in a json file called 'result.json'
-with open ('result.json', 'w') as file: 
-   json.dump(data, file, indent=4)
-# close the driver 
+
+with open('data/result.json','w') as f:
+   json.dump(data,f,indent=4)
 scrapper_instance.close_driver()
 
