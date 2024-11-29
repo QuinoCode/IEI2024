@@ -98,6 +98,51 @@ class ComunitatValencianaGuarda:
         self.municipio = municipio
         self.provincia = provincia
 
+def leer_csv(file_path):
+    listb = []
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+            for line in lines[1:]:  # Saltar la primera línea (encabezado)
+                partes = line.strip().split(";")
+                if len(partes) == 10:
+                    comunitat = ComunitatValenciana(
+                        partes[0].replace('"', ""),
+                        partes[1].replace('"', ""),
+                        partes[2].replace('"', ""),
+                        partes[3].replace('"', ""),
+                        partes[4].replace('"', ""),
+                        partes[5].replace('"', ""),
+                        partes[6].replace('"', ""),
+                        partes[7].replace('"', ""),
+                        partes[8].replace('"', ""),
+                        partes[9].replace('"', "")
+                    )
+                    listb.append(comunitat)
+    except Exception as e:
+        print(f"Error al leer el archivo CSV: {e}")
+    return listb
+
+
+def generar_json(lista, output_file):
+    try:
+        with open(output_file, 'w', encoding='utf-8') as file:
+            file.write("[\n")
+            for i, comunitat in enumerate(lista):
+                data = comunitat.to_dict()
+                json_entry = "  {\n"
+                json_entry += ",\n".join([f'    "{key}": "{value}"' for key, value in data.items()])
+                json_entry += "\n  }"
+                if i < len(lista) - 1:
+                    json_entry += ","
+                json_entry += "\n"
+                file.write(json_entry)
+            file.write("]\n")
+        print("El archivo JSON ha sido generado con éxito.")
+    except Exception as e:
+        print(f"Error al escribir el archivo JSON: {e}")
+
+
 
 try:
     with open(archivoL, 'r', encoding='utf-8') as file:
