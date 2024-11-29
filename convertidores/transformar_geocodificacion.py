@@ -1,6 +1,7 @@
 import requests
 import json
 import os
+import sys
 
 # Función para transformar el tipo basado en nombre y descripción
 def transformar_tipo_con_parroquia(document_name, document_description):
@@ -70,7 +71,7 @@ def transformar_datos_con_geocodificacion(datos_entrada):
     return datos_transformados
 
 # Ruta del archivo JSON de entrada y salida
-archivo_entrada = "edificios.json"
+archivo_entrada = sys.argv[1]
 archivo_salida = "edificios_transformados.json"
 
 if __name__ == "__main__":
