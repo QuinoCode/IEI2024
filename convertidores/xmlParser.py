@@ -27,6 +27,13 @@ with open('datos/CLEdata.json', 'w', encoding='utf-8') as f:
         provincia = 'null'
         localidad = 'null'
 
+        codpost = monumento.find('codigoPostal')
+        if codpost is not None :
+            codpost = codpost.text
+
+        if int(codpost) > 52999 :
+            continue
+
         poblacion = monumento.find('poblacion')
         if poblacion is not None:
             localidad = poblacion.find('localidad').text
@@ -35,10 +42,6 @@ with open('datos/CLEdata.json', 'w', encoding='utf-8') as f:
         calle = monumento.find('calle')
         if calle is not None :
             calle = calle.text
-
-        codpost = monumento.find('codigoPostal')
-        if codpost is not None :
-            codpost = codpost.text
 
         descripcion = monumento.find('Descripcion')
         if descripcion is not None :
