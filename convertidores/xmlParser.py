@@ -5,6 +5,7 @@ import json
 file = 'datos/monumentos.xml'
 tree = ET.parse(file)
 root = tree.getroot()
+result = []
 
 def typeCheck(tipo):
     answer = None
@@ -21,11 +22,17 @@ def typeCheck(tipo):
     return answer
 
 with open('datos/CLEdata.json', 'w', encoding='utf-8') as f:
-
     for monumento in root.iter('monumento'):
         coords = monumento.find('coordenadas')
         provincia = 'null'
         localidad = 'null'
+
+        codpost = monumento.find('codigoPostal')
+        if codpost is not None :
+            codpost = codpost.text
+
+        if int(codpost) > 52999 :
+            continue
 
         poblacion = monumento.find('poblacion')
         if poblacion is not None:
@@ -36,10 +43,6 @@ with open('datos/CLEdata.json', 'w', encoding='utf-8') as f:
         if calle is not None :
             calle = calle.text
 
-        codpost = monumento.find('codigoPostal')
-        if codpost is not None :
-            codpost = codpost.text
-
         descripcion = monumento.find('Descripcion')
         if descripcion is not None :
             descripcion = descripcion.text
@@ -48,14 +51,18 @@ with open('datos/CLEdata.json', 'w', encoding='utf-8') as f:
         tip = typeCheck(tipo)    
 
         item = {
-            "name" : monumento.find('nombre').text,
-            "type" : tip,
-            "address" : calle,
-            "postal code" : codpost,
-            "longitude" : coords.find('longitud').text,
-            "latitude" : coords.find('latitud').text,
-            "description" : descripcion,
-            "localName" : localidad,
-            "provinceName" : provincia
+            "Monumento" : {
+                "nombre" : monumento.find('nombre').text,
+                "tipo" : tip,
+                "direccion" : calle,
+                "codigo_postal" : codpost,
+                "longitud" : coords.find('longitud').text,
+                "latitud" : coords.find('latitud').text,
+                "descripcion" : descripcion
+            }, 
+            "Localidad" : localidad,
+            "Provincia" : provincia
         }
-        json.dump(item, f, ensure_ascii=False, indent=4)
+        result.append(item)
+
+    json.dump(result, f, ensure_ascii=False, indent=4)
