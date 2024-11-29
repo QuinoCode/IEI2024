@@ -29,7 +29,14 @@ def coordenadas_a_direccion(latitud, longitud):
         return datos.get("display_name", "Dirección no encontrada")
     else:
         return "Error al obtener la dirección"
-
+        
+def validar_codigo_postal(codigo_postal):
+    try:
+        if int(codigo_postal) >= 53000:
+            return None
+        return codigo_postal
+    except (ValueError, TypeError):
+        return None  # Devuelve `None` si el código postal no es un número válido
 # Función para transformar datos con geocodificación
 def transformar_datos_con_geocodificacion(datos_entrada):
     datos_transformados = []
@@ -39,9 +46,11 @@ def transformar_datos_con_geocodificacion(datos_entrada):
         direccion = ""
         if latitud and longitud:
             direccion = coordenadas_a_direccion(latitud, longitud)
+        codigo_postal = validar_codigo_postal(item.get("postalCode"))
+
         
         nuevo_item = {
-            "M": {
+            "Monumento": {
                 "nombre": item.get("documentName", ""),
                 "tipo": transformar_tipo_con_parroquia(item.get("documentName", ""), item.get("documentDescription", "")),
                 "dirección": direccion,
@@ -50,14 +59,9 @@ def transformar_datos_con_geocodificacion(datos_entrada):
                 "latitud": item.get("latwgs84", ""),
                 "descripcion": item.get("documentDescription", "")
             },
-            "L": {
-                "codigo": item.get("municipalitycode", ""),
-                "nombre": item.get("municipality", "")
-            },
-            "P": {
-                "codigo": item.get("territorycode", ""),
-                "nombre": item.get("territory", "")
-            }
+                "Localidad": item.get("municipality", "")
+                "Pais": item.get("territory", "")
+            
         }
         datos_transformados.append(nuevo_item)
     return datos_transformados
