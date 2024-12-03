@@ -30,11 +30,87 @@ def csvToJson():
             listCSV.append(item)
     return listCSV
 
-def mappingTipo(json):
-    pass
+def convertCodClasificacion(codClasificacion):
+    if codClasificacion is None:
+        return None
+    
+    if codClasificacion == "1":
+        return "Bienes inmuebles 1ª"
+    
+    return "Bienes muebles 1ª"
+
+def convertCodCategoria(codCategoria):
+    match codCategoria:
+        case "1":
+            return "Conjunto histórico"
+        case "2":
+            return "Sitio histórico"
+        case "3":
+            return "Jardín histórico"
+        case "4":
+            return "Monumento"
+        case "5":
+            return "Zona arqueológica"
+        case "6":
+            return "Archivo"
+        case "7":
+            return "Zona paleontológica"
+        case "8":
+            return "Espacio etnológico"
+        case "9":
+            return "Parque cultural"
+        case "11":
+            return "Monumento de interés local"
+        case "18":
+            return "Individual (mueble)"
+        case "20":
+            return "Fondo de museo (primera)"
+        case _:
+            return None
+
+def mappingCategoria(json):
+    if json["categoria"] is None:
+        return convertCodCategoria(json["codcategoria"])
+    
+    return json["categoria"]
+
+def mappingClasificacion(json):
+    if json["clasificacion"] is None:
+        return convertCodClasificacion(json["codclasificacion"])
+    
+    return json["clasificacion"]
+
+def mappingTipo (json):
+    denominacion = json["denominacion"].lower()
+    categoria = mappingCategoria(json)
+    clasificacion = mappingClasificacion(json)
+
+    if denominacion is None or categoria is None or clasificacion is None:
+        return None
+
+    if categoria == "Zona arqueológica" or categoria == "Zona paleontológica":
+        return "Yacimiento arqueológico"
+    
+    if "puente" in denominacion:
+        return "Puente"
+    
+    if any(type in denominacion for type in ["torre","castillo","castellet","castell","fortaleza"]):
+        return "Castillo-Fortaleza-Torre"
+
+    if any(type in denominacion for type in ["escudo","emblema"]) or clasificacion == "Archiva" or denominacion.startswith("casa") or denominacion.startswith("cruz"):
+        return "Edificio Singular"
+
+    if "iglesia" in denominacion:
+        return "Iglesia-Ermita"
+
+    return "Otros"
 
 def mappingDescripcion(json):
-    pass
+    categoria = mappingCategoria(json)
+    clasificacion = mappingClasificacion(json)
+    if (categoria is not None and clasificacion is not None):
+        return categoria + " - " + clasificacion
+    return None
 
 def mappingsToJson(listCSV):
     jsonMapped = []
@@ -56,10 +132,6 @@ def mappingsToJson(listCSV):
     return jsonMapped
 
 # nombre tipo direccion codigo_postal longitud latitud descripcion, localidad provincia
-
-
-def mappingCategoria():
-    pass
 
 def obtainCoordenatesFromScrapper(data):
     scrapper_instance = Scrapper()
