@@ -18,17 +18,18 @@ def identificar_tipo_de_datos(file):
 
 def convertir_datos_a_json(tipo):
     if (tipo == "xml"):
-        convertir_xml_a_json()
+        convertir_xml_a_json(file)
     if (tipo == "csv"):
-        convertir_csv_a_json()
+        convertir_csv_a_json(file)
     if (tipo == "json"):
         convertir_json_a_json(file)
 
-def convertir_csv_a_json():
+def convertir_csv_a_json(file):
     pass
-def convertir_xml_a_json():
-    
-    pass
+
+def convertir_xml_a_json(file):
+    xmlParser.main(file)
+
 def convertir_json_a_json(file):
     call(["python3", "convertidores/transformar_geocodificacion.py", file])
     
