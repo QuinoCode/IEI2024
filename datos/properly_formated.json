@@ -1,41 +1,210 @@
 [
     {
         "Monumento": {
-            "nombre": "Ermita de La Antigua - Santa María de Zumarraga",
-            "tipo": "Iglesia-Ermita",
-            "direccion": "Antioko eliza, 0a, Barreiatua, La Antigua, Zumarraga, Gipuzkoa, Euskadi, 20700, España",
-            "codigo_postal": "20700",
-            "longitud": "-2.303607169311588",
-            "latitud": "43.09096533979687",
-            "descripcion": "La ermita de Santa María (La Antigua) de Zumarraga está considerada como la ca..."
+            "nombre": "Castillo y Murallas de Biar",
+            "tipo": "Castillo-Fortaleza-Torre",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "",
+            "latitud": "",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
         },
-        "Localidad": "Zumarraga",
-        "Provincia": "Gipuzkoa"
+        "Localidad": "BIAR",
+        "Provincia": "ALICANTE"
     },
     {
         "Monumento": {
-            "nombre": "Monasterio de Zenarruza",
-            "tipo": "Monasterio-Convento",
-            "direccion": "Ziortza-Goierria auzoa, Goierria Ziortza, Ziortza-Bolibar, Bizkaia, Euskadi, 48278, España",
-            "codigo_postal": "48279",
-            "longitud": "-2.561749469311503",
-            "latitud": "43.24845524092432",
-            "descripcion": "Declarado Monumento Nacional de Euskadi, el Monasterio de Zenarruza, antigua colegiata, se encuen..."
+            "nombre": "Illeta dels Banyets",
+            "tipo": "Yacimiento arqueológico",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "29 7 12,318917",
+            "latitud": "5 34 54,558824",
+            "descripcion": "'Zona arqueológica - Bienes inmuebles 1ª'"
         },
-        "Localidad": "Ziortza-Bolibar",
-        "Provincia": "Bizkaia"
+        "Localidad": "CAMPELLO (EL)",
+        "Provincia": "ALICANTE"
     },
     {
         "Monumento": {
-            "nombre": "Iglesia de San Antón",
-            "tipo": "Iglesia-Ermita",
-            "direccion": "Iglesia de San Antón / San Anton eliza, On Claudio Gallastegi kalea / Calle Claudio Gallastegi, Ribera / Erribera, Casco Viejo, Ibaiondo, Bilbao, Bizkaia, Euskadi, 48005, España",
-            "codigo_postal": "48005",
-            "longitud": "-2.9232169344180736",
-            "latitud": "43.255144741110605",
-            "descripcion": "El trazado de la iglesia de San Antón (también denominada San Antonio Abad) forma p..."
+            "nombre": "Palacio Condal y Monasterio de la Virgen del Milagro",
+            "tipo": "Otros",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "29 22 45,9943",
+            "latitud": "5 31 7,326176",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
         },
-        "Localidad": "Bilbao",
-        "Provincia": "Bizkaia"
+        "Localidad": "COCENTAINA",
+        "Provincia": "ALICANTE"
+    },
+    {
+        "Monumento": {
+            "nombre": "Yacimiento romano Illeta del Portichol",
+            "tipo": "Yacimiento arqueológico",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "29 25 53,960372",
+            "latitud": "5 57 42,834631",
+            "descripcion": "'Zona arqueológica - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "XÀBIA",
+        "Provincia": "ALICANTE"
+    },
+    {
+        "Monumento": {
+            "nombre": "Castillo-Iglesia Parroquial de San Miguel Arcángel",
+            "tipo": "Castillo-Fortaleza-Torre",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "29 24 53,70631",
+            "latitud": "5 45 15,250445",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "MURLA",
+        "Provincia": "ALIGANTE"
+    },
+    {
+        "Monumento": {
+            "nombre": "Recinto Amurallado de Almazora",
+            "tipo": "Otros",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "30 24 26,913398",
+            "latitud": "5 40 17,497113",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "ALMASSORA",
+        "Provincia": "CASTELLÓN"
+    },
+    {
+        "Monumento": {
+            "nombre": "Cartuja de la Vall de Christ",
+            "tipo": "Otros",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "30 17 47,591396",
+            "latitud": "5 23 32,204404",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "ALTURA",
+        "Provincia": "CASTELLÓN"
+    },
+    {
+        "Monumento": {
+            "nombre": "Poblado de la Peña Ajuerá",
+            "tipo": "Otros",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "30 17 52,777347",
+            "latitud": "5 29 11,965882",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "AZUÉBAR",
+        "Provincia": "CASTELLON"
+    },
+    {
+        "Monumento": {
+            "nombre": "Yacimiento fenicio de Vinarratgell",
+            "tipo": "Yacimiento arqueológico",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "30 23 35,177182",
+            "latitud": "5 40 57,150263",
+            "descripcion": "'Zona arqueológica - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "BORRIANA",
+        "Provincia": "CASTELLÓN"
+    },
+    {
+        "Monumento": {
+            "nombre": "Torre Campanario El Fadrí",
+            "tipo": "Castillo-Fortaleza-Torre",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "30 26 46,97392",
+            "latitud": "5 41 1,432473",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "CASTELLÓ DE LA PLANA",
+        "Provincia": "CASTELLÓN"
+    },
+    {
+        "Monumento": {
+            "nombre": "Escudo de los Júdici de Acharte Blanes",
+            "tipo": "Edificio Singular",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "29 43 25,431501",
+            "latitud": "5 29 14,162465",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "ALZIRA",
+        "Provincia": "VALENCIA"
+    },
+    {
+        "Monumento": {
+            "nombre": "Torre Muza",
+            "tipo": "Castillo-Fortaleza-Torre",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "29 50 21,944485",
+            "latitud": "5 29 0,390903",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "BENIFAIÓ",
+        "Provincia": "VALENCIA"
+    },
+    {
+        "Monumento": {
+            "nombre": "Poblado de la Peña Ajuerá",
+            "tipo": "Otros",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "30 17 52,777347",
+            "latitud": "5 29 11,965882",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "AZUÉBAR",
+        "Provincia": "CASTELLÓN"
+    },
+    {
+        "Monumento": {
+            "nombre": "Iglesia Parroquial de San Miguel Arcángel",
+            "tipo": "Iglesia-Ermita",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "29 32 53,879016",
+            "latitud": "5 30 6,657058",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "BENIGÀNIM",
+        "Provincia": "VALENCIA"
+    },
+    {
+        "Monumento": {
+            "nombre": "Restos Arqueológicos de la Alquería islámica de Bofilla y su Torre",
+            "tipo": "Castillo-Fortaleza-Torre",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "30 4 59,709405",
+            "latitud": "5 27 46,933406",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "BÉTERA",
+        "Provincia": "VALENCIA"
+    },
+    {
+        "Monumento": {
+            "nombre": "Molino Fortificado Torre Gausa",
+            "tipo": "Castillo-Fortaleza-Torre",
+            "direccion": "null",
+            "codigo_postal": "null",
+            "longitud": "30 10 9,760806",
+            "latitud": "5 32 39,220681",
+            "descripcion": "'Monumento - Bienes inmuebles 1ª'"
+        },
+        "Localidad": "SAGUNT",
+        "Provincia": "VALENCIA"
     }
 ]

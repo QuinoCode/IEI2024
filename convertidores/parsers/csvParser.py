@@ -155,7 +155,8 @@ def main(csvFile):
     listCSV = csvToJson(csvFile)
     jsonMapped = mappingsToJson(listCSV)
     jsonCoordenates = obtainCoordenatesFromScrapper(jsonMapped)
-    jsonCodes = obtainPostalCodeAddress(jsonCoordenates)
+    # jsonCodes = obtainPostalCodeAddress(jsonCoordenates)
     with open(destination,'w') as f:
-        json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
+        # json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
+        json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
     return destination

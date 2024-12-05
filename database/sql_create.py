@@ -31,7 +31,7 @@ class Sql_manager:
         if exists:
             return False
         
-        if monumento["latitud"] == None or monumento["longitud"] == None or monumento["tipo"] == None:
+        if monumento["latitud"] == None or monumento["latitud"] == "" or monumento["longitud"] == None or monumento["longitud"] == "" or monumento["tipo"] == None:
             return False
 
         return True

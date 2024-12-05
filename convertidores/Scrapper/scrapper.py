@@ -74,6 +74,8 @@ class Scrapper:
 
     ## Wait function
     def process_data(self, x: str, y: str):
+        if (x == "" or y == "" or x == None or y == None):
+            return "", ""
         self.type_new_coordenates(x,y)
         self.transform_button.click()
         self.wait.until(lambda driver: self.element_has_text(self.longitudeDegree))
