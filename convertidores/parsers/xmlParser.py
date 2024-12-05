@@ -47,7 +47,7 @@ def execute(root):
 
             descripcion = monumento.find('Descripcion')
             if descripcion is not None :
-                descripcion = clean(descripcion.text)
+                descripcion = findReplace(descripcion.text)
             else: 
                 descripcion = ""
 
@@ -71,12 +71,12 @@ def execute(root):
 
         json.dump(result, f, ensure_ascii=False, indent=4)
 
-def clean(desc):
-    t = desc.replace('<![CDATA[', "")
-    i = t.replace('<p align="justify">', "")
-    u = i.replace('</p>', "")
+def findReplace(desc):
+    cdatad = desc.replace('<![CDATA[', "")
+    align = cdatad.replace('<p align="justify">', "")
+    midtag = align.replace('<p>', "")
+    endtag = midtag.replace('</p>', "")
     return u.replace(']]>', "")
-
 
 def main(filepath):
     tree = ET.parse(filepath)
