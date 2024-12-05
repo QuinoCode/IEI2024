@@ -1,9 +1,11 @@
 import xml.etree.ElementTree as ET
 import html
 import json
+import re
 import sys
 
 result = []
+CLEANR = re.compile('<.*?>')
 
 def typeCheck(tipo):
     answer = None
@@ -74,9 +76,7 @@ def execute(root):
 
 def findReplace(desc):
     cdatad = desc.replace('<![CDATA[', "")
-    align = cdatad.replace('<p align="justify">', "")
-    midtag = align.replace('<p>', "")
-    endtag = midtag.replace('</p>', "")
+    endtag = re.sub(CLEANR, '', cdatad)
     brack = endtag.replace(']]>', "")
     return html.unescape(brack)
     
