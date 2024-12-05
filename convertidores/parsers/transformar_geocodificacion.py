@@ -57,7 +57,7 @@ def transformar_datos_con_geocodificacion(datos_entrada):
             "Monumento": {
                 "nombre": item.get("documentName", ""),
                 "tipo": transformar_tipo_con_parroquia(item.get("documentName", ""), item.get("documentDescription", "")),
-                "dirección": direccion,
+                "direccion": direccion,
                 "codigo_postal": codigo_postal,
                 "longitud": longitud,
                 "latitud": latitud,
@@ -72,7 +72,7 @@ def transformar_datos_con_geocodificacion(datos_entrada):
 
 # Ruta del archivo JSON de entrada y salida
 archivo_entrada = sys.argv[1]
-archivo_salida = "../datos/properly_formated.json"
+archivo_salida = "datos/properly_formated.json"
 
 if __name__ == "__main__":
     if os.path.exists(archivo_entrada):

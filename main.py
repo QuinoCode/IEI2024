@@ -34,11 +34,10 @@ def convertir_xml_a_json(file):
     xmlParser.main(file)
 
 def convertir_json_a_json(file):
-    call(["python3", "convertidores/transformar_geocodificacion.py", file])
+    call(["python3", "convertidores/parsers/transformar_geocodificacion.py", file])
     
 try: 
     file = sys.argv[1] # Si no tiene el argumento da un out of bounds exception
-
     tipo_de_datos = identificar_tipo_de_datos(file)
     convertir_datos_a_json(tipo_de_datos)
     location_of_parsed_data = "./datos/properly_formated.json"
