@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+import html
 import json
 import sys
 
@@ -76,8 +77,9 @@ def findReplace(desc):
     align = cdatad.replace('<p align="justify">', "")
     midtag = align.replace('<p>', "")
     endtag = midtag.replace('</p>', "")
-    return u.replace(']]>', "")
-
+    brack = endtag.replace(']]>', "")
+    return html.unescape(brack)
+    
 def main(filepath):
     tree = ET.parse(filepath)
     root = tree.getroot()
