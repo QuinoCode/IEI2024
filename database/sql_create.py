@@ -17,9 +17,9 @@ class Sql_manager:
         self.dbcursor = self.conn.cursor()
 
     def createTables(self):
-        self.dbcursor.execute('CREATE TABLE Monumento(codigo, nombre, tipo, direccion, codigo_postal, longitud, latitud, descripcion, en_localidad)')
-        self.dbcursor.execute('CREATE TABLE Localidad(codigo, nombre, en_provincia)')
-        self.dbcursor.execute('CREATE TABLE Provincia(codigo, nombre)')
+        self.dbcursor.execute('CREATE TABLE Monumento(codigo INTEGER PRIMARY KEY, nombre, tipo, direccion, codigo_postal, longitud, latitud, descripcion, en_localidad)')
+        self.dbcursor.execute('CREATE TABLE Localidad(codigo INTEGER PRIMARY KEY, nombre, en_provincia)')
+        self.dbcursor.execute('CREATE TABLE Provincia(codigo INTEGER PRIMARY KEY, nombre)')
         self.conn.commit()
 
     def validToInsertMonument(self, monumento):

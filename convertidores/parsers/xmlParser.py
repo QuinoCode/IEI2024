@@ -26,21 +26,30 @@ def execute(root):
             localidad = 'null'
 
             codpost = monumento.find('codigoPostal')
-            if codpost is not None :
+            if codpost is not None:
                 codpost = codpost.text
+            else:
+                codpost = ""
 
             poblacion = monumento.find('poblacion')
             if poblacion is not None:
                 localidad = poblacion.find('localidad').text
                 provincia = poblacion.find('provincia').text
+            else: 
+                localidad = ""
+                provincia = ""
 
             calle = monumento.find('calle')
-            if calle is not None :
+            if calle is not None:
                 calle = calle.text
+            else: 
+                calle = ""
 
             descripcion = monumento.find('Descripcion')
             if descripcion is not None :
                 descripcion = clean(descripcion.text)
+            else: 
+                descripcion = ""
 
             tipo = monumento.find('tipoMonumento').text
             tip = typeCheck(tipo)    

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<monumentos>
+  <monumento>
+    <identificador>23941</identificador>
+    <nombre>Risco La Zorrera</nombre>
+    <tipoMonumento>Yacimientos arqueológicos</tipoMonumento>
+    <identificadorBienInteresCultural>696</identificadorBienInteresCultural>
+    <calle>Risco La Zorrera</calle>
+    <clasificacion>Yacimiento</clasificacion>
+    <tipoConstruccion>Arte rupestre</tipoConstruccion>
+    <codigoPostal>5489</codigoPostal>
+    <Descripcion><![CDATA[<p align="justify">Descubierto en 1986 consta de dos paneles verticales y un tercero horizontal que cubre los anteriores. Pueden distinguirse tres fases de ejecuci&oacute;n, predominando en la primera los trazos de color rojo, en la segunda destaca una figura de forma humana, y la tercera incluye figuras animales y humanas alargadas.</p>
+<p align="justify">Se ha interpretado como la representaci&oacute;n de un templo o altar. Est&aacute; protegido por una verja.</p>]]></Descripcion>
+    <periodoHistorico>Neolítico</periodoHistorico>
+    <periodoHistorico>Edad del Hierro</periodoHistorico>
+    <periodoHistorico>Edad del Bronce</periodoHistorico>
+    <poblacion>
+      <provincia>Ávila</provincia>
+      <municipio>Candeleda</municipio>
+      <localidad>Raso (El)</localidad>
+    </poblacion>
+    <coordenadas>
+      <latitud>40.170041</latitud>
+      <longitud>-5.339664</longitud>
+    </coordenadas>
+  </monumento>
+  <monumento>
+    <identificador>23942</identificador>
+    <nombre>Finca de las Garoza</nombre>
+    <tipoMonumento>Yacimientos arqueológicos</tipoMonumento>
+    <identificadorBienInteresCultural>993</identificadorBienInteresCultural>
+    <calle>Finca de las Garozas</calle>
+    <clasificacion>Yacimiento</clasificacion>
+    <tipoConstruccion>Arte rupestre</tipoConstruccion>
+    <codigoPostal>5530</codigoPostal>
+    <Descripcion><![CDATA[<p align="justify">Constituye un buen ejemplo de arte rupestre al aire libre. Se pueden distinguir dos grupos de grabados, incluyendo el primero una figura masculina y otra femenina, mientras que el segundo est&aacute; formado por una &uacute;nica figura animal de gran tama&ntilde;o.</p>]]></Descripcion>
+    <horariosYTarifas><![CDATA[
+<h3>Tarifa</h3> <ul><li>General: 4 &euro;</li><li>Reducida: 2 &euro;</li></ul> (Gratuita: menores de 12 años,  personas con discapacidad)<p><strong>Observaciones:</strong>  Consultar en www.ibarrolaengaroza.org , llamando al 667476488 o al 920265182</p><p>Este portal no se hace responsable de los posibles cambios en los horarios y tarifas reflejados</p>]]></horariosYTarifas>
+    <periodoHistorico>Edad del Cobre</periodoHistorico>
+    <periodoHistorico>Edad del Bronce</periodoHistorico>
+    <poblacion>
+      <provincia>Ávila</provincia>
+      <municipio>Muñogalindo</municipio>
+      <localidad>Muñogalindo</localidad>
+    </poblacion>
+    <coordenadas>
+      <latitud>40.6072887</latitud>
+      <longitud>-4.9084822</longitud>
+    </coordenadas>
+  </monumento>
+  <monumento>
+    <identificador>23943</identificador>
+    <nombre>Peñaguila</nombre>
+    <tipoMonumento>Yacimientos arqueológicos</tipoMonumento>
+    <identificadorBienInteresCultural>997</identificadorBienInteresCultural>
+    <calle>Crtra. Muñogalindo - Balbarda. Altura cementerio, camino dirección norte</calle>
+    <clasificacion>Yacimiento</clasificacion>
+    <tipoConstruccion>Arte rupestre</tipoConstruccion>
+    <codigoPostal>5530</codigoPostal>
+    <Descripcion><![CDATA[<p align="justify">Constituye una amplia zona en la que se han localizado distintos grabados y restos arqueol&oacute;gicos, entre los que pueden citarse hachas de piedra, fragmentos de silex, pellas de barro cocidas y fragmentos de cer&aacute;mica a mano tanto lisa como pintada y decorada con motivos incisos.</p>]]></Descripcion>
+    <periodoHistorico>Edad del Cobre</periodoHistorico>
+    <poblacion>
+      <provincia>Ávila</provincia>
+      <municipio>Muñogalindo</municipio>
+      <localidad>Muñogalindo</localidad>
+    </poblacion>
+    <coordenadas>
+      <latitud>40.603607</latitud>
+      <longitud>-4.899341</longitud>
+    </coordenadas>
+  </monumento>
+</monumentos>

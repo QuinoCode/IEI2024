@@ -38,6 +38,7 @@ def convertir_json_a_json(file):
     
 try: 
     file = sys.argv[1] # Si no tiene el argumento da un out of bounds exception
+
     tipo_de_datos = identificar_tipo_de_datos(file)
     convertir_datos_a_json(tipo_de_datos)
     location_of_parsed_data = "./datos/properly_formated.json"
@@ -49,6 +50,6 @@ try:
     sql_manager.main(data)
     
 except:
-    print("No se ha proporcionado la ruta del archivo a tratar")
+    print("Algo ha sucedido, probablemente no se ha proporcionado la ruta del archivo a tratar")
 
 
