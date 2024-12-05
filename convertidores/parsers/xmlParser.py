@@ -19,7 +19,7 @@ def typeCheck(tipo):
     return answer
 
 def execute(root):
-    with open('datos/CLEdata.json', 'w', encoding='utf-8') as f:
+    with open('datos/properly_formated.json', 'w', encoding='utf-8') as f:
         for monumento in root.iter('monumento'):
             coords = monumento.find('coordenadas')
             provincia = 'null'

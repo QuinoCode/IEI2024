@@ -23,7 +23,7 @@ def direccion_codigo_postal(laLatitud, laLongitud):
                 components = parsed_data['results'][0]['components']
                 direccion = components.get('road', 'Desconocido') + ", " + components.get('city', 'Desconocido')
                 codigo_postal = components.get('postcode', 'Desconocido')
-                return direccion, codigo_postal
+                return "'" + direccion + "'", codigo_postal
             else:
                 return "Error", "Error"
         except Exception as e:

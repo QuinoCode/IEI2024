@@ -72,7 +72,7 @@ def transformar_datos_con_geocodificacion(datos_entrada):
 
 # Ruta del archivo JSON de entrada y salida
 archivo_entrada = sys.argv[1]
-archivo_salida = "edificios_transformados.json"
+archivo_salida = "../datos/properly_formated.json"
 
 if __name__ == "__main__":
     if os.path.exists(archivo_entrada):

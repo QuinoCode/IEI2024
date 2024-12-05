@@ -1,20 +1,19 @@
-from convertidores.Scrapper.scrapper import *
-from convertidores.CV.direccion_codigo_postal import *
 import csv
 import json
-import sys
 import time
+from convertidores.Scrapper.scrapper import Scrapper
+from convertidores.parsers.direccion_codigo_postal import *
 
-csvFile = sys.argv[1]
-destination = 'datos/CVdata.json'
+destination = 'datos/properly_formated.json'
 
-def csvToJson():
+def csvToJson(csvFile):
     listCSV = []   
     with open(csvFile, encoding='utf-8') as csvf:
-        csvRead = csv.DictReader(csvf)
-        for row in csvRead:
+        csvRead = csv.reader(csvf)
+        next(csvRead)
+        for row in  csvRead:
             # IGCPV denominación provincia municipio UTMeste UTMnorte codclasificacion clasificacion codcategoria categoria
-            campos = row.split(';')
+            campos = row[0].split(';')
             item = {
                 "IGCPV": campos[0],
                 "denominacion": campos[1],
@@ -109,7 +108,7 @@ def mappingDescripcion(json):
     categoria = mappingCategoria(json)
     clasificacion = mappingClasificacion(json)
     if (categoria is not None and clasificacion is not None):
-        return categoria + " - " + clasificacion
+        return "'"+ (categoria + " - " + clasificacion).replace('"', "") +"'"
     return None
 
 def mappingsToJson(listCSV):
@@ -117,12 +116,12 @@ def mappingsToJson(listCSV):
     for json in listCSV:
         item = {
             "Monumento" : {
-                    "nombre" : json["denominacion"],
+                    "nombre" : json["denominacion"].replace('"',""),
                     "tipo" : mappingTipo(json),
                     "direccion" : 'null',
                     "codigo_postal" : 'null',
-                    "longitud" : json["UTMeste"],
-                    "latitud" : json["UTMnorte"],
+                    "longitud" : json["UTMeste"].replace("\"", ""),
+                    "latitud" : json["UTMnorte"].replace("\"",""),
                     "descripcion" : mappingDescripcion(json)
                 }, 
                 "Localidad" : json["municipio"],
@@ -142,7 +141,7 @@ def obtainCoordenatesFromScrapper(data):
         monument = wrapper["Monumento"]
         monument["longitud"], monument["latitud"] = scrapper_instance.process_data(monument["longitud"], monument["latitud"])
 
-    scrapper_instance.close()
+    scrapper_instance.close_driver()
     return data
 
 def obtainPostalCodeAddress(data):
@@ -152,10 +151,11 @@ def obtainPostalCodeAddress(data):
         time.sleep(1)
     return data
 
-def main():
-    listCSV = csvToJson()
+def main(csvFile):
+    listCSV = csvToJson(csvFile)
     jsonMapped = mappingsToJson(listCSV)
     jsonCoordenates = obtainCoordenatesFromScrapper(jsonMapped)
     jsonCodes = obtainPostalCodeAddress(jsonCoordenates)
-    json.dump(jsonCodes, destination, ensure_ascii=False, indent=4)
-
+    with open(destination,'w') as f:
+        json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
+    return destination
