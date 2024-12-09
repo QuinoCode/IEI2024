@@ -4,6 +4,9 @@ import time
 from convertidores.Scrapper.scrapper import Scrapper
 from convertidores.parsers.direccion_codigo_postal import *
 
+import http.client
+from urllib.parse import quote
+
 destination = 'datos/properly_formated.json'
 
 def csvToJson(csvFile):
@@ -145,10 +148,13 @@ def obtainCoordenatesFromScrapper(data):
     return data
 
 def obtainPostalCodeAddress(data):
+    # Declarar la direccion de la key par usar la API
+    api_key = "0de8b6c75c6048a382e50ff276c6ba90"
+
     # Recorre cada elemento en los datos
     for wrapper in data:
         monument = wrapper["Monumento"]
-        
+
         # Obtiene las coordenadas de latitud y longitud
         latitud = monument["latitud"]
         longitud = monument["longitud"]
@@ -158,15 +164,36 @@ def obtainPostalCodeAddress(data):
 
         # Verifica si las coordenadas son válidas
         if latitud is not None and longitud is not None:
-            url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={latitud}&lon={longitud}"
+            # Se espera un segundo porque la API solo puede hacer una consulta por segundo
+            time.sleep(1)
 
+            # Se prepara la consulta para la API de OpenCage
+            conn = http.client.HTTPSConnection("api.opencagedata.com")
+            query = f"/geocode/v1/json?q={quote(str(latitud))}+{quote(str(longitud))}&key={API_KEY}"
+            conn.request("GET", query)
+
+            # Obtener la respuesta
+            response = conn.getresponse()
+            data = response.read().decode("utf-8")
+            
             # Obtención de direccion y codigo_postal
             try:
-                response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-                if response.status_code == 200:
-                    data = response.json()
-                    direccion = data.get("display_name", 'null')
-                    codigo_postal = data.get("address", {}).get("postcode", 'null')
+                parsed_data = json.loads(data)
+                if parsed_data['results']:
+                    components = parsed_data['results'][0]['components']
+                    codigo_postal = components.get('postcode', 'None')
+
+                    # Obtencion de la calle y ciudad para la direccion
+                    road = components.get('road', 'None')
+                    city = components.get('city', 'None')
+
+                    # Procesar la calle y la ciudad para generar la direccion
+                    if road is not None and city is not None:
+                        direccion = road + ", " + city
+                    elif road is not None
+                        direccion = road
+                    elif city is not None
+                        direccion = city
             except Exception as e:
                 print(f"Error al obtener dirección para lat: {latitud}, lon: {longitud}: {e}")
 
