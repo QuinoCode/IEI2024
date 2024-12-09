@@ -149,7 +149,7 @@ def obtainCoordenatesFromScrapper(data):
 
 def obtainPostalCodeAddress(data):
     # Declarar la direccion de la key par usar la API
-    api_key = "0de8b6c75c6048a382e50ff276c6ba90"
+    API_KEY = "0de8b6c75c6048a382e50ff276c6ba90"
 
     # Recorre cada elemento en los datos
     for wrapper in data:
