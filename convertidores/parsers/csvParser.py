@@ -145,18 +145,65 @@ def obtainCoordenatesFromScrapper(data):
     return data
 
 def obtainPostalCodeAddress(data):
+    # Recorre cada elemento en los datos
     for wrapper in data:
         monument = wrapper["Monumento"]
-        monument["direccion"], monument["codigo_postal"] = direccion_codigo_postal(monument["longitud"], monument["latitud"])
-        time.sleep(1)
+        
+        # Obtiene las coordenadas de latitud y longitud
+        latitud = monument["latitud"]
+        longitud = monument["longitud"]
+        
+        direccion = None
+        codigo_postal = None
+
+        # Verifica si las coordenadas son válidas
+        if latitud is not None and longitud is not None:
+            url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={latitud}&lon={longitud}"
+
+            # Obtención de direccion y codigo_postal
+            try:
+                response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+                if response.status_code == 200:
+                    data = response.json()
+                    direccion = data.get("display_name", 'null')
+                    codigo_postal = data.get("address", {}).get("postcode", 'null')
+            except Exception as e:
+                print(f"Error al obtener dirección para lat: {latitud}, lon: {longitud}: {e}")
+
+        # Asigna la direccion y el codigo_postal al monumento en el JSON
+        monument["direccion"] = direccion
+        monument["codigo_postal"] = codigo_postal
+
+    return data
+
+def obtainValidatedCodePostal(data):
+    # Recorre cada elemento en los datos
+    for wrapper in data:
+        monument = wrapper["Monumento"]
+        
+        # Obtiene el codigo_postal
+        codigo_postal = monument["codigo_postal"]
+
+        # Verifica si es no nulo
+        if codigo_postal is not None:
+
+            # Comprueba si es valido
+                try:
+                    if int(codigo_postal) >= 53000:
+                        # Asigna como no valido el codigo_postal
+                        monument["codigo_postal"] = None
+                except Excepton as e:
+                    print(f"Error al verificar el código postal: {codigo_postal}: {e}")
+
     return data
 
 def main(csvFile):
     listCSV = csvToJson(csvFile)
     jsonMapped = mappingsToJson(listCSV)
     jsonCoordenates = obtainCoordenatesFromScrapper(jsonMapped)
-    # jsonCodes = obtainPostalCodeAddress(jsonCoordenates)
+    jsonAddress = obtainPostalCodeAddress(jsonCoordenates)
+    jsonCodes = obtainValidatedCodePostal(jsonAddress)
     with open(destination,'w') as f:
-        # json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
-        json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
+        json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
+        # json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
     return destination
