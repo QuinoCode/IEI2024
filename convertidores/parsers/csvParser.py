@@ -184,7 +184,7 @@ def obtainValidatedCodePostal(data):
         # Obtiene el codigo_postal
         codigo_postal = monument["codigo_postal"]
 
-        #Verifica si es no nulo
+        # Verifica si es no nulo
         if codigo_postal is not None:
 
             # Comprueba si es valido
