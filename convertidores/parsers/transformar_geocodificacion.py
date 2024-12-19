@@ -21,7 +21,19 @@ def transformar_tipo_con_parroquia(document_name, document_description):
     else:
         return "Otros"
 
-
+# Función para geocodificar coordenadas usando Nominatim API
+def coordenadas_a_direccion(latitud, longitud):
+    if not latitud or not longitud:
+        return None
+    url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={latitud}&lon={longitud}"
+    try:
+        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("display_name", "Dirección no encontrada")
+    except Exception as e:
+        print(f"Error al obtener dirección para lat: {latitud}, lon: {longitud}: {e}")
+    return "Dirección no encontrada"
 
 # Función para validar el código postal
 def validar_codigo_postal(codigo_postal):
@@ -70,20 +82,16 @@ def transformar_datos_con_geocodificacion(datos_entrada):
         datos_transformados.append(nuevo_item)
     return datos_transformados
 
-if len(sys.argv) < 2:
-    print("Uso: python codigo.py <archivo_entrada.json>")
-    sys.exit(1)
-
-archivo_entrada = sys.argv[1]
-archivo_salida = "datos_transformados.json"
+archivo_entrada = "edificios.json" if len(sys.argv) < 2 else sys.argv[1]
+archivo_salida = "properly_formated.json"
 
 if __name__ == "__main__":
     if os.path.exists(archivo_entrada):
-        # Preprocesar el archivo para eliminar la segunda aparición vacía de 'address'
+        # Preprocesar el archivo para eliminar todas las apariciones vacías de 'address'
         with open(archivo_entrada, "r", encoding="utf-8") as f:
             contenido = f.read()
         
-        # Eliminar la segunda aparición vacía de 'address': "address" : "",
+        # Eliminar todas las apariciones de "address" : "",
         contenido = contenido.replace('"address" : "",', '')
 
         # Convertir el contenido modificado a JSON
@@ -99,3 +107,4 @@ if __name__ == "__main__":
         print(f"Transformación completada. Archivo generado: {archivo_salida}")
     else:
         print(f"Archivo {archivo_entrada} no encontrado.")
+
