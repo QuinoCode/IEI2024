@@ -8,7 +8,9 @@ from convertidores.parsers.direccion_codigo_postal import *
 import http.client
 from urllib.parse import quote
 
-def convertCodClasificacion(codClasificacion):
+def convertCodClasificacion(codClasificacion, id):
+    if codClasificacion == "1" or codClasificacion == "2":
+        print(f"Se ha corregido a {id} la clasificación")
     match codClasificacion:
         case "1":
             return "Bienes inmuebles 1ª"
@@ -17,34 +19,37 @@ def convertCodClasificacion(codClasificacion):
         case _:
             return ""
 
-def convertCodCategoria(codCategoria):
-    match codCategoria:
-        case "1":
-            return "Conjunto histórico"
-        case "2":
-            return "Sitio histórico"
-        case "3":
-            return "Jardín histórico"
-        case "4":
-            return "Monumento"
-        case "5":
-            return "Zona arqueológica"
-        case "6":
-            return "Archivo"
-        case "7":
-            return "Zona paleontológica"
-        case "8":
-            return "Espacio etnológico"
-        case "9":
-            return "Parque cultural"
-        case "11":
-            return "Monumento de interés local"
-        case "18":
-            return "Individual (mueble)"
-        case "20":
-            return "Fondo de museo (primera)"
-        case _:
-            return ""
+def convertCodCategoria(codCategoria, id):
+    lista = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "11", "18", "20"]
+    if codCategoria in lista:
+        print(f"Se ha corregido a {id} la categoría")
+        match codCategoria:
+            case "1":
+                return "Conjunto histórico"
+            case "2":
+                return "Sitio histórico"
+            case "3":
+                return "Jardín histórico"
+            case "4":
+                return "Monumento"
+            case "5":
+                return "Zona arqueológica"
+            case "6":
+                return "Archivo"
+            case "7":
+                return "Zona paleontológica"
+            case "8":
+                return "Espacio etnológico"
+            case "9":
+                return "Parque cultural"
+            case "11":
+                return "Monumento de interés local"
+            case "18":
+                return "Individual (mueble)"
+            case "20":
+                return "Fondo de museo (primera)"
+    else :
+        return ""
 
 def mappingCategoria(json):
     if json.get("CATEGORIA", "") == "":
