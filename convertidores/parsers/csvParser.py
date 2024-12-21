@@ -117,18 +117,24 @@ def mappingDescripcion(json):
     return None
 
 def mappingProvincia(json):
-    provincia = json.get("provincia", "")
+    provincia = json.get("PROVINCIA", "")
     match provincia:
         case "CASTELLON":
             return "CASTELLÓN"
-        case "ALIGANTE":
-            return "ALICANTE"
+        case "CASTELLÓ":
+            return "CASTELLÓN"
         case "ALACANT":
             return "ALICANTE"
         case "VALÈNCIA":
             return "VALENCIA"
+        case "CASTELLÓN":
+            return "CASTELLÓN"
+        case "ALICANTE":
+            return "ALICANTE"
+        case "VALENCIA":
+            return "VALENCIA"
         case _:
-            return provincia
+            return None
 
 def mappingsToJson(listCSV):
     jsonMapped = []
