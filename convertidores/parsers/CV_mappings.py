@@ -138,10 +138,10 @@ def obtainCoordenatesFromScrapper(data):
     scrapper_instance.close_driver()
     return data
 
-def obtainPostalCodeAddress(data, api_key):
+def obtainPostalCodeAddress(data):
     for wrapper in data:
         monument = wrapper["Monumento"]
-        monument["direccion"], monument["codigo_postal"] = direccion_codigo_postal(monument["latitud"], monument["longitud"], api_key)
+        monument["direccion"], monument["codigo_postal"] = direccion_codigo_postal(monument["latitud"], monument["longitud"])
     return data
 
 def obtainValidatedCodePostal(data):
@@ -164,10 +164,10 @@ def write(data, path_out):
     with open(path_out, mode='w', encoding='utf-8') as json_file:
         json.dump(data, json_file, ensure_ascii=False, indent=4)
 
-def main(csv_origen, csvConverted_out, api_key, json_out):
+def main(csv_origen, csvConverted_out, json_out):
     jsonConverted = convertir_csv_a_json(csv_origen, csvConverted_out)
     jsonMapped = mappingsToJson(jsonConverted)
     jsonCoordenates = obtainCoordenatesFromScrapper(jsonMapped)
-    jsonAddress = obtainPostalCodeAddress(jsonCoordenates, api_key)
+    jsonAddress = obtainPostalCodeAddress(jsonCoordenates)
     jsonPostalCode = obtainValidatedCodePostal(jsonAddress)
     write(jsonPostalCode, json_out)
