@@ -3,11 +3,12 @@ import http.client
 import json
 from urllib.parse import urlencode
 
-def direccion_codigo_postal(laLatitud, laLongitud, API_KEY):
+def direccion_codigo_postal(laLatitud, laLongitud):
+    API_KEY = '0de8b6c75c6048a382e50ff276c6ba90'
     direccion = None
     codigo_postal = None
 
-    if laLatitud != "Error" and laLongitud != "Error" and API_KEY:
+    if laLatitud != "Error" and laLongitud != "Error":
         time.sleep(2)
         try:
             query_params = {
