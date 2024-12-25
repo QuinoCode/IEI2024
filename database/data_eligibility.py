@@ -28,11 +28,13 @@ def monumentoYaInsertado(sql_manager, monumento):
 
 def valoresMonumentoNulos(monumento):
     # TODO: extraer el if de debajo a un método que los valores importantes no son null, sino descartar comprobarValoresMonumentoNull (con todos los campos)
-    # Faltan cosas abajo probablemente
-    if monumento["latitud"] == None or monumento["latitud"] == "" or monumento["longitud"] == None or monumento["longitud"] == "" or monumento["tipo"] == None:
-        print()
-        return False
     # Devuelve true si hay algún valor nulo, devuelve false si todos tiene valor
+    atributos = ["tipo", "direccion", "codigo_postal", "longitud", "latitud", "descripcion"]
+    for atributo in atributos:
+        if monumento[atributo] == None or monumento[atributo] == "":
+            print("Monumento descartado por no tener el artibuto {atributo} definido")
+            return True
+    return False
     
 def codigoPostalInvalido(monumento):
     #Comprobar si codigo postal está entre 1000 y 52999
@@ -76,6 +78,7 @@ def validToInsertProvincia(sql_manager, provincia):
         print("Provincia descartada por no tener nombre")
         return False
     provincia = unificaLenguaje(provincia) #Devuelve la provincia estandarizada a los valores esperados (siempre y cuando haga matching con uno de los valores plurilingues esperados)
+    provincia = corregirProvinica(provincia)
     if (nombreProvinciaInvalido(provincia)):
         return False
     if (provinciaYaInsertada(sql_manager, provincia)):
@@ -91,6 +94,36 @@ def provinciaYaInsertada(sql_manager, provincia):
         return True
     return False
 
+def corregirProvinica(provincia):
+    provincia_acento = {
+        "Alava" : "Álava",
+        "Almeria" : "Almería",
+        "Avila" : "Ávila",
+        "Caceres" : "Cáceres",
+        "Cadiz" : "Cádiz",
+        "Castellon" : "Castellón",
+        "Cordoba" : "Córdoba",
+        "Guipuzcoa" : "Guipúzcoa",
+        "Jaen" : "Jaén",
+        "Leon" : "León",
+        "Malaga" : "Málaga",
+        "ALAVA" : "ÁLAVA",
+        "ALMERIA" : "ALMERÍA",
+        "AVILA" : "ÁVILA",
+        "CACERES" : "CÁCERES",
+        "CADIZ" : "CÁDIZ",
+        "CASTELLON" : "CASTELLÓN",
+        "CORDOBA" : "CÓRDOBA",
+        "GUIPUZCOA" : "GUIPÚZCOA",
+        "JAEN" : "JAÉN",
+        "LEON" : "LEÓN",
+        "MALAGA" : "MÁLAGA"
+    }
+    provincia_correcta = provincia_acento.get(provincia, provincia)
+    if (provincia_correcta != provincia):
+        print(f"El nombre de la provincia {provincia} ha sido corregido a {provincia_correcta}")
+    return provincia_correcta
+
 def unificaLenguaje(provincia):
     provincia_bilingue = {
         "CASTELLÓ": "CASTELLÓN",
@@ -100,10 +133,11 @@ def unificaLenguaje(provincia):
         "Araba/Álava": "ÁLAVA",
         "Bizkaia": "VIZCAYA",
         "Gipuzkoa": "GUIPÚZCOA",
-        "Ávila": "ÁVILA"
+        "Ávila": "ÁVILA",
+        "A Coruña" : "LA CORUÑA",
+        "A CORUÑA" : "LA CORUÑA"
     }
-    # TODO: Aquí llamas un método que corrija con un mapa: { "Alacant": "Alicante", "València": "Valencia" }
-    # Busca la provincia en el mapa y corrige si es necesario
+    # TODO: Aquí llamas un método que corrija con un mapa: { "Alacant": "Alicante", "València": "Valencia" }# Busca la provincia en el mapa y corrige si es necesario
     provincia_correcta = provincia_bilingue.get(provincia, provincia)
     if (provincia_correcta != provincia):
         print(f"El nombre de la provincia {provincia} ha sido estandarizado a {provincia_correcta}")
@@ -111,8 +145,26 @@ def unificaLenguaje(provincia):
 
 def nombreProvinciaInvalido(provincia):
     # TODO: crear una lista de provincias validas de manera que se pueda buscar "provincia" in lista y que devuelva si existe o no
-    provinciasValidas = ["Ávila", "Burgos", "León", "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora"]
+    provincias = ["Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila",
+        "Badajoz", "Baleares", "Barcelona", "Burgos", "Cáceres", "Cádiz",
+        "Cantabria", "Castellón", "Ciudad Real", "Córdoba", "Cuenca", 
+        "Girona", "Granada", "Guadalajara", "Guipúzcoa", "Huelva", "Huesca", 
+        "Jaén", "La Coruña", "La Rioja", "Las Palmas", "León", "Lleida", 
+        "Lugo", "Madrid", "Málaga", "Murcia", "Navarra", "Ourense", 
+        "Palencia", "Pontevedra", "Salamanca", "Segovia", "Sevilla", 
+        "Soria", "Tarragona", "Santa Cruz de Tenerife", "Teruel", "Toledo", 
+        "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza",
+        "ÁLAVA", "ALBACETE", "ALICANTE", "ALMERÍA", "ÁVILA",
+        "BADAJOZ", "BALEARES", "BARCELONA", "BURGOS", "CÁCERES", "CÁDIZ",
+        "CASTELLÓN", "CIUDAD REAL", "CÓRDOBA", "LA CORUÑA", "CUENCA",
+        "GIRONA", "GRANADA", "GUADALAJARA", "GUIPÚZCOA", "HUELVA", "HUESCA",
+        "JAÉN", "LA CORUÑA", "LA RIOJA", "LAS PALMAS", "LEÓN", "LLEIDA",
+        "LUGO", "MADRID", "MÁLAGA", "MURCIA", "NAVARRA", "OURENSE",
+        "PALENCIA", "PONTEVEDRA", "SALAMANCA", "SEGOVIA", "SEVILLA",
+        "SORIA", "TARRAGONA", "SANTA CRUZ DE TENERIFE", "TERUEL", "TOLEDO",
+        "VALENCIA", "VALLADOLID", "VIZCAYA", "ZAMORA", "ZARAGOZA"]
     # TODO: aquí llamas un método que compruebe que el nombre está dentro de los esperados. (dentro de la lista)
-    print()
-    # Devuelve true si el nombre de la provincia no se encuentra en la lista de valores válidos, false en caso contrario
+    if not provincia in provincias:
+        print("La provincia {provincia} no es válida")
+        return True
     return False
