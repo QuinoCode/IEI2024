@@ -9,12 +9,12 @@ def validToInsertMonument(sql_manager, monumento):
         return False
 
     if  (valoresMonumentoNulos(monumento)):
-        return False;
+        return False
 
     if  (codigoPostalInvalido(monumento)):
-        return False;
+        return False
     if  (latitudOlongitudInvalidas(monumento)):
-        return False;
+        return False
 
     return True
 
@@ -35,15 +35,24 @@ def valoresMonumentoNulos(monumento):
     # Devuelve true si hay algún valor nulo, devuelve false si todos tiene valor
     
 def codigoPostalInvalido(monumento):
-    # TODO: Comprobar que el código postal sea valido (no mayor de 52999 ni menor de 01000)
-    print()
-    pass
+    #Comprobar si codigo postal está entre 1000 y 52999
+    if 999 < int(monumento["codigo_postal"]) > 53000:
+        print('Formato codigo postal incorrecto, descartado')
+        return True
+    return False
     # Devuelve true si es invalido devuelve false si es valido
 
 def latitudOlongitudInvalidas(monumento):
-    # TODO: Comprobar que la latitud y la longitud no sea ni mayor que 180 ni menor que -180 
-    print()
-    pass
+    #Comprobar que longitud esté dentro de 180 y latitud dentro de 90
+    if -180.1 < float(monumento["longitud"]) > 180.1:
+        print('Formato longitud incorrecto, descartado')
+        return True
+
+    if -90.1 < float(monumento["latitud"]) > 90.1:
+        print('Formato latitud incorrecto, descartado')
+        return True
+    
+    return False
     # Devuelve true si son invalidas false si son validas
 
 def validToInsertLocalidad(sql_manager, localidad):
@@ -90,7 +99,8 @@ def unificaLenguaje(provincia):
         "Araba": "ÁLAVA",
         "Araba/Álava": "ÁLAVA",
         "Bizkaia": "VIZCAYA",
-        "Gipuzkoa": "GUIPÚZCOA"
+        "Gipuzkoa": "GUIPÚZCOA",
+        "Ávila": "ÁVILA"
     }
     # TODO: Aquí llamas un método que corrija con un mapa: { "Alacant": "Alicante", "València": "Valencia" }
     # Busca la provincia en el mapa y corrige si es necesario
@@ -101,6 +111,8 @@ def unificaLenguaje(provincia):
 
 def nombreProvinciaInvalido(provincia):
     # TODO: crear una lista de provincias validas de manera que se pueda buscar "provincia" in lista y que devuelva si existe o no
+    provinciasValidas = ["Ávila", "Burgos", "León", "Palencia", "Salamanca", "Segovia", "Soria", "Valladolid", "Zamora"]
     # TODO: aquí llamas un método que compruebe que el nombre está dentro de los esperados. (dentro de la lista)
     print()
     # Devuelve true si el nombre de la provincia no se encuentra en la lista de valores válidos, false en caso contrario
+    return False

@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import html
 import json
 import re
-import sys
+from database.data_eligibility import validToInsertMonument
 
 result = []
 CLEANR = re.compile('<.*?>')
@@ -70,7 +70,11 @@ def execute(root):
                 "Localidad" : localidad,
                 "Provincia" : provincia
             }
-            result.append(item)
+            if validToInsertMonument(item):
+                print ("Elemento " + item["Monumento"]["nombre"] + " Añadido")
+                result.append(item)
+            else:
+                print("Elemento " + item["Monumento"]["nombre"] + " Descartado")
 
         json.dump(result, f, ensure_ascii=False, indent=4)
 
