@@ -2,11 +2,6 @@ import csv
 import json
 from CV_JsonAPI import convertir_csv_a_json
 from CV_GeoAPI import direccion_codigo_postal
-from convertidores.Scrapper.scrapper import Scrapper
-from convertidores.parsers.direccion_codigo_postal import *
-
-import http.client
-from urllib.parse import quote
 
 def convertCodClasificacion(codClasificacion):
     match codClasificacion:
@@ -127,15 +122,10 @@ def mappingsToJson(listCSV):
     return jsonMapped
 
 def obtainCoordenatesFromScrapper(data):
-    scrapper_instance = Scrapper()
-    scrapper_instance.stablish_connection_and_initialize_variables()
-    scrapper_instance.set_up_site()
-
     for wrapper in data:
         monument = wrapper["Monumento"]
-        monument["longitud"], monument["latitud"] = scrapper_instance.process_data(monument["longitud"], monument["latitud"])
-
-    scrapper_instance.close_driver()
+        monument["longitud"] = -74.0060
+        monument["latitud"] = 40.7128
     return data
 
 def obtainPostalCodeAddress(data, api_key):
