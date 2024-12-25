@@ -159,7 +159,7 @@ def obtainValidatedCodePostal(data):
                 if int(codigo_postal) >= 53000:
                     monument["codigo_postal"] = None
             except Exception as e:
-                monument["codigo_postal"] = None
+                print(f"Error al validar el código postal: {codigo_postal}: {e}")
 
     return data
 
