@@ -116,20 +116,6 @@ def mappingDescripcion(json):
         return "'"+ (categoria + " - " + clasificacion).replace('"', "") +"'"
     return None
 
-def mappingProvincia(json):
-    provincia = json.get("provincia", "")
-    match provincia:
-        case "CASTELLON":
-            return "CASTELLÓN"
-        case "ALIGANTE":
-            return "ALICANTE"
-        case "ALACANT":
-            return "ALICANTE"
-        case "VALÈNCIA":
-            return "VALENCIA"
-        case _:
-            return provincia
-
 def mappingsToJson(listCSV):
     jsonMapped = []
     for json in listCSV:
@@ -144,7 +130,7 @@ def mappingsToJson(listCSV):
                     "descripcion" : mappingDescripcion(json)
                 }, 
                 "Localidad" : json["municipio"],
-                "Provincia" : mappingProvincia(json)
+                "Provincia" : json["provincia"]
         }
         jsonMapped.append(item)
     return jsonMapped
