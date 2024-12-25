@@ -19,7 +19,7 @@ def validToInsertMonument(sql_manager, monumento):
     return True
 
 def monumentoYaInsertado(sql_manager, monumento):
-    check = sql_manager.dbcursor.execute("SELECT * FROM Monumento WHERE nombre ="+"\'"+monumento["nombre"].replace("'", "")+"\'")
+    check = sql_manager.execute("SELECT * FROM Monumento WHERE nombre ="+"\'"+monumento["nombre"].replace("'", "")+"\'")
     exists = check.fetchone()
     if exists:
         print(f"Monumento '{monumento["nombre"]}' ha sido descartado porque ya existe en la base de datos")
@@ -55,7 +55,7 @@ def validToInsertLocalidad(sql_manager, localidad):
     return True
 
 def localidadYaInsertada(sql_manager, localidad):
-    check = sql_manager.dbcursor.execute("SELECT * FROM Localidad WHERE nombre ="+"\'"+localidad+"\'")
+    check = sql_manager.execute("SELECT * FROM Localidad WHERE nombre ="+"\'"+localidad+"\'")
     exists = check.fetchone()
     if exists:
         print(f"Localidad '{localidad}' ha sido descartada porque ya existe en la base de datos")
@@ -74,7 +74,7 @@ def validToInsertProvincia(sql_manager, provincia):
     return True
 
 def provinciaYaInsertada(sql_manager, provincia):
-    check = sql_manager.dbcursor.execute("SELECT * FROM Provincia WHERE nombre=?", (provincia,))
+    check = sql_manager.execute("SELECT * FROM Provincia WHERE nombre=?", (provincia,))
     exists = check.fetchone()
     exists = exists is not None
     if exists:

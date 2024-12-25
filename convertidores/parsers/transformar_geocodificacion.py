@@ -37,6 +37,7 @@ def coordenadas_a_direccion(latitud, longitud):
 
 # Función para validar el código postal
 def validar_codigo_postal(codigo_postal):
+    if (codigo_postal == ''): return None
     try:
         if int(codigo_postal) >= 53000:
             return None
