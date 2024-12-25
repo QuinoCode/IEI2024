@@ -148,89 +148,18 @@ def obtainCoordenatesFromScrapper(data):
     return data
 
 def obtainPostalCodeAddress(data):
-    # Declarar la direccion de la key par usar la API
-    API_KEY = "0de8b6c75c6048a382e50ff276c6ba90"
-
-    # Recorre cada elemento en los datos
     for wrapper in data:
         monument = wrapper["Monumento"]
-
-        # Obtiene las coordenadas de latitud y longitud
-        latitud = monument["latitud"]
-        longitud = monument["longitud"]
-        
-        direccion = None
-        codigo_postal = None
-
-        # Verifica si las coordenadas son válidas
-        if latitud is not None and longitud is not None:
-            # Se espera un segundo porque la API solo puede hacer una consulta por segundo
-            time.sleep(1)
-
-            # Se prepara la consulta para la API de OpenCage
-            conn = http.client.HTTPSConnection("api.opencagedata.com")
-            query = f"/geocode/v1/json?q={quote(str(latitud))}+{quote(str(longitud))}&key={API_KEY}"
-            conn.request("GET", query)
-
-            # Obtener la respuesta
-            response = conn.getresponse()
-            data = response.read().decode("utf-8")
-            
-            # Obtención de direccion y codigo_postal
-            try:
-                parsed_data = json.loads(data)
-                if parsed_data['results']:
-                    components = parsed_data['results'][0]['components']
-                    codigo_postal = components.get('postcode', 'None')
-
-                    # Obtencion de la calle y ciudad para la direccion
-                    road = components.get('road', 'None')
-                    city = components.get('city', 'None')
-
-                    # Procesar la calle y la ciudad para generar la direccion
-                    if road is not None and city is not None:
-                        direccion = road + ", " + city
-                    elif road is not None
-                        direccion = road
-                    elif city is not None
-                        direccion = city
-            except Exception as e:
-                print(f"Error al obtener dirección para lat: {latitud}, lon: {longitud}: {e}")
-
-        # Asigna la direccion y el codigo_postal al monumento en el JSON
-        monument["direccion"] = direccion
-        monument["codigo_postal"] = codigo_postal
-
-    return data
-
-def obtainValidatedCodePostal(data):
-    # Recorre cada elemento en los datos
-    for wrapper in data:
-        monument = wrapper["Monumento"]
-        
-        # Obtiene el codigo_postal
-        codigo_postal = monument["codigo_postal"]
-
-        # Verifica si es no nulo
-        if codigo_postal is not None:
-
-            # Comprueba si es valido
-                try:
-                    if int(codigo_postal) >= 53000:
-                        # Asigna como no valido el codigo_postal
-                        monument["codigo_postal"] = None
-                except Excepton as e:
-                    print(f"Error al validar el código postal: {codigo_postal}: {e}")
-
+        monument["direccion"], monument["codigo_postal"] = direccion_codigo_postal(monument["longitud"], monument["latitud"])
+        time.sleep(1)
     return data
 
 def main(csvFile):
     listCSV = csvToJson(csvFile)
     jsonMapped = mappingsToJson(listCSV)
     jsonCoordenates = obtainCoordenatesFromScrapper(jsonMapped)
-    jsonAddress = obtainPostalCodeAddress(jsonCoordenates)
-    jsonCodes = obtainValidatedCodePostal(jsonAddress)
+    # jsonCodes = obtainPostalCodeAddress(jsonCoordenates)
     with open(destination,'w') as f:
-        json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
-        # json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
+        # json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
+        json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
     return destination
