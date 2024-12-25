@@ -8,11 +8,11 @@ def transformar_tipo_con_parroquia(document_name, document_description):
     text = (document_name or "") + " " + (document_description or "")
     if "Yacimiento arqueológico" in text:
         return "Yacimiento arqueológico"
-    elif "Iglesia" in text or "Ermita" in text or "Basílica" in text or "Catedral" in text or "Parroquia" in text:
+    elif any(x in text for x in ["Iglesia", "Ermita", "Basílica", "Catedral", "Parroquia"]):
         return "Iglesia-Ermita"
-    elif "Monasterio" in text or "Convento" in text:
+    elif any(x in text for x in ["Monasterio", "Convento"]):
         return "Monasterio-Convento"
-    elif "Castillo" in text or "Fortaleza" in text or "Torre" in text or "Palacio" in text:
+    elif any(x in text for x in ["Castillo", "Fortaleza", "Torre", "Palacio"]):
         return "Castillo-Fortaleza-Torre"
     elif "Edificio" in text:
         return "Edificio Singular"
@@ -39,27 +39,39 @@ def coordenadas_a_direccion(latitud, longitud):
 def validar_codigo_postal(codigo_postal):
     if (codigo_postal == ''): return None
     try:
-        if int(codigo_postal) >= 53000:
+        cp_int = int(codigo_postal)
+        if cp_int >= 53000:
             return None
         return codigo_postal
     except (ValueError, TypeError):
-        return None  # Devuelve `None` si el código postal no es un número válido
+        return None
 
-# Función para transformar datos con validación y geocodificación
+# Función para transformar datos con validación
 def transformar_datos_con_geocodificacion(datos_entrada):
     datos_transformados = []
-    for item in datos_entrada:
+    for idx, item in enumerate(datos_entrada, start=1):
         latitud = item.get("latwgs84")
         longitud = item.get("lonwgs84")
-        direccion = coordenadas_a_direccion(latitud, longitud)
-        codigo_postal = validar_codigo_postal(item.get("postalCode"))
+        direccion = item.get("address", "")
+        codigo_postal_original = item.get("postalCode")
+
+        # Validar latitud y longitud
+        if not latitud or not longitud:
+            print(f"[WARN] Registro {idx}: Latitud o longitud no válida. Registro omitido.")
+            continue
+
+        # Validar código postal
+        codigo_postal = validar_codigo_postal(codigo_postal_original)
+        if codigo_postal is None and codigo_postal_original is not None:
+            print(f"[WARN] Registro {idx}: Código postal inválido ('{codigo_postal_original}'). Registro omitido.")
+            continue
 
         nuevo_item = {
             "Monumento": {
                 "nombre": item.get("documentName", ""),
                 "tipo": transformar_tipo_con_parroquia(item.get("documentName", ""), item.get("documentDescription", "")),
                 "direccion": direccion,
-                "codigo_postal": codigo_postal,
+                "codigo_postal": codigo_postal if codigo_postal is not None else "",
                 "longitud": longitud,
                 "latitud": latitud,
                 "descripcion": item.get("documentDescription", "")
@@ -67,27 +79,33 @@ def transformar_datos_con_geocodificacion(datos_entrada):
             "Localidad": item.get("municipality", ""),
             "Provincia": item.get("territory", "")
         }
-        
+
         datos_transformados.append(nuevo_item)
     return datos_transformados
 
-# Ruta del archivo JSON de entrada y salida
-archivo_entrada = sys.argv[1]
-archivo_salida = "datos/properly_formated.json"
+archivo_entrada = "edificios.json" if len(sys.argv) < 2 else sys.argv[1]
+archivo_salida = "properly_formated.json"
 
 if __name__ == "__main__":
     if os.path.exists(archivo_entrada):
-        # Cargar datos originales
-        with open(archivo_entrada, "r", encoding="utf-8") as archivo:
-            datos_originales = json.load(archivo)
+        # Preprocesar el archivo para eliminar todas las apariciones vacías de 'address'
+        with open(archivo_entrada, "r", encoding="utf-8") as f:
+            contenido = f.read()
+        
+        # Eliminar todas las apariciones de "address" : "",
+        contenido = contenido.replace('"address" : "",', '')
+
+        # Convertir el contenido modificado a JSON
+        datos_originales = json.loads(contenido)
 
         # Transformar los datos
         datos_transformados = transformar_datos_con_geocodificacion(datos_originales)
 
-        # Guardar los datos transformados
+        # Guardar los datos transformados en la misma carpeta que el script
         with open(archivo_salida, "w", encoding="utf-8") as archivo_salida_json:
             json.dump(datos_transformados, archivo_salida_json, ensure_ascii=False, indent=4)
 
         print(f"Transformación completada. Archivo generado: {archivo_salida}")
     else:
         print(f"Archivo {archivo_entrada} no encontrado.")
+

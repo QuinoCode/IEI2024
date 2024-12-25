@@ -1,8 +1,13 @@
 import csv
 import json
 import time
+from CV_JsonAPI import convertir_csv_a_json
+from CV_GeoAPI import direccion_codigo_postal
 from convertidores.Scrapper.scrapper import Scrapper
 from convertidores.parsers.direccion_codigo_postal import *
+
+import http.client
+from urllib.parse import quote
 
 destination = 'datos/properly_formated.json'
 
@@ -30,13 +35,13 @@ def csvToJson(csvFile):
     return listCSV
 
 def convertCodClasificacion(codClasificacion):
-    if codClasificacion is None:
-        return None
-    
-    if codClasificacion == "1":
-        return "Bienes inmuebles 1ª"
-    
-    return "Bienes muebles 1ª"
+    match codClasificacion:
+        case "1":
+            return "Bienes inmuebles 1ª"
+        case "2":
+            return "Bienes muebles 1ª"
+        case _:
+            return ""
 
 def convertCodCategoria(codCategoria):
     match codCategoria:
@@ -111,6 +116,26 @@ def mappingDescripcion(json):
         return "'"+ (categoria + " - " + clasificacion).replace('"', "") +"'"
     return None
 
+def mappingProvincia(json):
+    provincia = json.get("PROVINCIA", "")
+    match provincia:
+        case "CASTELLON":
+            return "CASTELLÓN"
+        case "CASTELLÓ":
+            return "CASTELLÓN"
+        case "ALACANT":
+            return "ALICANTE"
+        case "VALÈNCIA":
+            return "VALENCIA"
+        case "CASTELLÓN":
+            return "CASTELLÓN"
+        case "ALICANTE":
+            return "ALICANTE"
+        case "VALENCIA":
+            return "VALENCIA"
+        case _:
+            return None
+
 def mappingsToJson(listCSV):
     jsonMapped = []
     for json in listCSV:
@@ -125,7 +150,7 @@ def mappingsToJson(listCSV):
                     "descripcion" : mappingDescripcion(json)
                 }, 
                 "Localidad" : json["municipio"],
-                "Provincia" : json["provincia"]
+                "Provincia" : mappingProvincia(json)
         }
         jsonMapped.append(item)
     return jsonMapped
@@ -147,16 +172,37 @@ def obtainCoordenatesFromScrapper(data):
 def obtainPostalCodeAddress(data):
     for wrapper in data:
         monument = wrapper["Monumento"]
-        monument["direccion"], monument["codigo_postal"] = direccion_codigo_postal(monument["longitud"], monument["latitud"])
-        time.sleep(1)
+        monument["direccion"], monument["codigo_postal"] = direccion_codigo_postal(monument["latitud"], monument["longitud"])
+    return data
+
+def obtainValidatedCodePostal(data):
+    # Recorre cada elemento en los datos
+    for wrapper in data:
+        monument = wrapper["Monumento"]
+        
+        # Obtiene el codigo_postal
+        codigo_postal = monument["codigo_postal"]
+
+        # Verifica si es no nulo
+        if codigo_postal is not None:
+
+            # Comprueba si es valido
+                try:
+                    if int(codigo_postal) >= 53000:
+                        # Asigna como no valido el codigo_postal
+                        monument["codigo_postal"] = None
+                except Excepton as e:
+                    print(f"Error al validar el código postal: {codigo_postal}: {e}")
+
     return data
 
 def main(csvFile):
     listCSV = csvToJson(csvFile)
     jsonMapped = mappingsToJson(listCSV)
     jsonCoordenates = obtainCoordenatesFromScrapper(jsonMapped)
-    # jsonCodes = obtainPostalCodeAddress(jsonCoordenates)
+    jsonAddress = obtainPostalCodeAddress(jsonCoordenates)
+    jsonCodes = obtainValidatedCodePostal(jsonAddress)
     with open(destination,'w') as f:
-        # json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
-        json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
+        json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
+        # json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
     return destination
