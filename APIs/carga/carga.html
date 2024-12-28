@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Carga del almacén de datos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #F5F5F5;
+    }
+
+    /* Contenedor principal (simula una ventana o modal) */
+    .contenedor {
+      max-width: 600px;
+      margin: 40px auto;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .subtitulo {
+      font-size: 14px;
+      margin-bottom: 10px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    .checkbox-group {
+      margin-bottom: 20px;
+      margin-left: 20px;
+    }
+
+    .checkbox-group label {
+      display: block;
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+
+    /* Estilos de los botones */
+    .buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    button {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    /* Botón "Cancelar" */
+    #btnCancelar {
+      background: #ffffff;
+      color: #555;
+      border: 1px solid #999;
+    }
+
+    /* Botón "Cargar" */
+    #btnCargar {
+      background: #aaa;
+      color: #fff;
+      border: none;
+    }
+
+    /* Botón "Borrar almacén de datos" */
+    #btnBorrar {
+      background: #f50057;
+      color: #fff;
+      border: none;
+    }
+
+    /* Sección de resultados */
+    #resultados {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 4px;
+      background: #fafafa;
+    }
+
+    .resultado-titulo {
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .texto-res {
+      margin: 4px 0;
+    }
+
+    /* Tabla de registros reparados o rechazados */
+    table {
+      border-collapse: collapse;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      width: 100%;
+      max-width: 100%;
+      font-size: 13px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      text-align: left;
+    }
+
+    th {
+      background: #eee;
+    }
+
+    /* Opcional: estilo para "ninguno" */
+    .sin-registros {
+      margin-left: 20px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+<div class="contenedor">
+  <h1>Carga del almacén de datos</h1>
+  <div class="subtitulo">Seleccione fuente:</div>
+
+  <div class="checkbox-group">
+    <label>
+      <input type="checkbox" id="todas">
+      Seleccionar todas
+    </label>
+    <label>
+      <input type="checkbox" id="cle">
+      Castilla y León
+    </label>
+    <label>
+      <input type="checkbox" id="cv">
+      Comunitat Valenciana
+    </label>
+    <label>
+      <input type="checkbox" id="eus">
+      Euskadi
+    </label>
+  </div>
+
+  <div class="buttons">
+    <button id="btnCancelar" onclick="cancelar()">Cancelar</button>
+    <button id="btnCargar" onclick="cargarDatos()">Cargar</button>
+    <button id="btnBorrar" onclick="borrarAlmacen()">Borrar almacén de datos</button>
+  </div>
+
+  <div id="resultados">
+    <div class="resultado-titulo">Resultados de la carga:</div>
+    <div class="texto-res">
+      Número de registros cargados correctamente: <strong>--</strong>
+    </div>
+    <div class="texto-res">
+      <strong>Registros con errores y reparados:</strong>
+      <p class="sin-registros">--</p>
+    </div>
+    <div class="texto-res">
+      <strong>Registros con errores y rechazados:</strong>
+      <p class="sin-registros">--</p>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    function cancelar() {
+      // Simplemente reiniciamos los checkboxes por ejemplo
+      document.getElementById('todas').checked = false;
+      document.getElementById('cle').checked   = false;
+      document.getElementById('cv').checked    = false;
+      document.getElementById('eus').checked   = false;
+      // Borramos resultados
+      document.getElementById('resultados').innerHTML = `
+        <div class="resultado-titulo">Resultados de la carga:</div>
+        <div class="texto-res">
+          Número de registros cargados correctamente: <strong>--</strong>
+        </div>
+        <div class="texto-res">
+          <strong>Registros con errores y reparados:</strong>
+          <p class="sin-registros">--</p>
+        </div>
+        <div class="texto-res">
+          <strong>Registros con errores y rechazados:</strong>
+          <p class="sin-registros">--</p>
+        </div>
+      `;
+    }
+
+    function cargarDatos() {
+      // Obtenemos el valor de cada checkbox
+      const todas = document.getElementById('todas').checked;
+      const cle   = document.getElementById('cle').checked;
+      const cv    = document.getElementById('cv').checked;
+      const eus   = document.getElementById('eus').checked;
+
+      // Construimos el body del POST como JSON
+      const bodyData = {
+        todas: todas,
+        cle: cle,
+        cv: cv,
+        eus: eus
+      };
+
+      // Hacemos la petición POST al endpoint /carga de Flask
+      fetch('/carga', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Si el servidor devuelve un campo "error", lo mostramos
+        if (data.error) {
+          document.getElementById('resultados').innerHTML = `
+            <div class="resultado-titulo">Resultados de la carga:</div>
+            <p style="color:red;">Error: ${data.error}</p>
+          `;
+        } else {
+          // Mostramos los datos retornados por el endpoint
+          mostrarResultados(data);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('resultados').innerHTML = `
+          <div class="resultado-titulo">Resultados de la carga:</div>
+          <p style="color:red;">Error de conexión con el servidor</p>
+        `;
+      });
+    }
+
+    function mostrarResultados(data) {
+      // Extraemos los campos devueltos
+      const numCargados = data.numRegistrosCargados || 0;
+      const reparados   = data.registrosReparados || [];
+      const rechazados  = data.registrosRechazados || [];
+
+      let html = `<div class="resultado-titulo">Resultados de la carga:</div>
+                  <div class="texto-res">
+                    Número de registros cargados correctamente: <strong>${numCargados}</strong>
+                  </div>`;
+
+      // Registros con errores y reparados
+      html += `<div class="texto-res">
+                 <strong>Registros con errores y reparados:</strong>
+               </div>`;
+      if (reparados.length > 0) {
+        html += `<table>
+                  <thead>
+                    <tr>
+                      <th>Fuente de datos</th>
+                      <th>Nombre</th>
+                      <th>Localidad</th>
+                      <th>Motivo del error</th>
+                      <th>Operación realizada</th>
+                    </tr>
+                  </thead>
+                  <tbody>`;
+        reparados.forEach(reg => {
+          html += `<tr>
+                     <td>${reg.fuenteDatos || ''}</td>
+                     <td>${reg.nombre || ''}</td>
+                     <td>${reg.localidad || ''}</td>
+                     <td>${reg.motivoError || ''}</td>
+                     <td>${reg.operacionRealizada || ''}</td>
+                   </tr>`;
+        });
+        html += `</tbody></table>`;
+      } else {
+        html += `<p class="sin-registros">Ninguno</p>`;
+      }
+
+      // Registros con errores y rechazados
+      html += `<div class="texto-res">
+                 <strong>Registros con errores y rechazados:</strong>
+               </div>`;
+      if (rechazados.length > 0) {
+        html += `<table>
+                  <thead>
+                    <tr>
+                      <th>Fuente de datos</th>
+                      <th>Nombre</th>
+                      <th>Localidad</th>
+                      <th>Motivo del error</th>
+                    </tr>
+                  </thead>
+                  <tbody>`;
+        rechazados.forEach(reg => {
+          html += `<tr>
+                     <td>${reg.fuenteDatos || ''}</td>
+                     <td>${reg.nombre || ''}</td>
+                     <td>${reg.localidad || ''}</td>
+                     <td>${reg.motivoError || ''}</td>
+                   </tr>`;
+        });
+        html += `</tbody></table>`;
+      } else {
+        html += `<p class="sin-registros">Ninguno</p>`;
+      }
+
+      document.getElementById('resultados').innerHTML = html;
+    }
+
+    // Botón de "Borrar almacén de datos"
+    function borrarAlmacen() {
+      // Ejemplo: podrías invocar a fetch('/borrar', { method: 'DELETE' })...
+      alert("Se ha solicitado el borrado del almacén de datos (no implementado).");
+    }
+  </script>
+</body>
+</html>
+
