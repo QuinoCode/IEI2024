@@ -156,7 +156,7 @@ def obtainPostalCodeAddress(data):
             time.sleep(1)
             try:
                 query_params = {
-                    "q": f"{laLatitud},{laLongitud}",
+                    "q": f"{monument["latitud"]},{monument["longitud"]}",
                     "key": API_KEY
                 }
                 query = f"/geocode/v1/json?{urlencode(query_params)}"
