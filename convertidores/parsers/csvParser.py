@@ -6,6 +6,7 @@ from convertidores.parsers.direccion_codigo_postal import *
 
 import http.client
 from urllib.parse import quote
+from urllib.parse import urlencode
 
 destination = 'datos/properly_formated.json'
 
@@ -150,8 +151,40 @@ def obtainCoordenatesFromScrapper(data):
 def obtainPostalCodeAddress(data):
     for wrapper in data:
         monument = wrapper["Monumento"]
-        monument["direccion"], monument["codigo_postal"] = direccion_codigo_postal(monument["longitud"], monument["latitud"])
-        time.sleep(1)
+        API_KEY = "0de8b6c75c6048a382e50ff276c6ba90"
+        if monument["latitud"] != "Error" and monument["longitud"] != "Error":
+            time.sleep(1)
+            try:
+                query_params = {
+                    "q": f"{laLatitud},{laLongitud}",
+                    "key": API_KEY
+                }
+                query = f"/geocode/v1/json?{urlencode(query_params)}"
+            
+                with http.client.HTTPSConnection("api.opencagedata.com") as conn:
+                    conn.request("GET", query)
+                    response = conn.getresponse()
+                
+                    if response.status != 200:
+                        raise Exception(f"Error en la respuesta de la API: {response.status} {response.reason}")
+                
+                    data = response.read().decode("utf-8")
+                    parsed_data = json.loads(data)
+                
+                    if 'results' in parsed_data and parsed_data['results']:
+                        components = parsed_data['results'][0].get('components', {})
+                        calle = components.get('road', None)
+                        ciudad = components.get('city', None)
+                        monument["codigo_postal"] = components.get('postcode', None)
+                    
+                        if calle and ciudad:
+                            monument["direccion"] = f"{calle}, {ciudad}"
+                        elif calle:
+                            monument["direccion"] = f"{calle}, CIUDAD DESCONOCIDA"
+                        elif ciudad:
+                            monument["direccion"] = ciudad
+            except Exception as e:
+                print(f"Error al procesar los datos: {e}")
     return data
 
 def main(csvFile):
