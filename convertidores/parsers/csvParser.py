@@ -151,7 +151,7 @@ def obtainCoordenatesFromScrapper(data):
 def obtainPostalCodeAddress(data):
     for wrapper in data:
         monument = wrapper["Monumento"]
-        API_KEY = "0de8b6c75c6048a382e50ff276c6ba90"
+        API_KEY = "06a875f723d14e6798dadfb93eced894"
         if monument["latitud"] != "Error" and monument["longitud"] != "Error":
             time.sleep(1)
             try:
