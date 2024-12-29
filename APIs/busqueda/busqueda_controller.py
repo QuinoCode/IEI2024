@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-
+from APIs.busqueda.busqueda_service import *
 api = Flask(__name__)
 
 # Metodo post de ejemplo para que copieis la estructura de como funciona 
@@ -15,7 +15,7 @@ def metodo_post_ejemplo():
 """
 Además de devolver el json devolvemos el status code de HTTP
 ------------------------------------------------------------
-200 OK – Petición correcta.
+200 OK - Petición correcta.
 201 Created - Recurso creado satisfactoriamente.
 400 Bad Request - El cliente envio una petición incorrecta
 401 Unauthorized - El cliente no pasó el proceso de autenticación (no vamos a tener así que nos da igual)
@@ -31,10 +31,9 @@ def buscar_monumento():
     codigo_postal = data.get('codigo_postal')
     provincia = data.get('provincia')
     tipo = data.get('tipo')
-    # TODO: procesar la query internamente con una función del estilo
-    # diccionario_respuesta =  busca_monumento_en_base_datos(localidad, codigo_postal, provincia, tipo) #importado base de datos
+    diccionario_respuesta = query_database(localidad, codigo_postal, provincia, tipo)
     if not  diccionario_respuesta:
-        return jsonify({"error": "No hubo respuesta de la base de datos"}), 404
+        return jsonify({"error": "No ha habido ningún resultado con esos parámetros"}), 404
     return jsonify(diccionario_respuesta), 200
 
 # It's a post method since it has to wrapp the data inputted by the user in a json and get methods don't allow for a body

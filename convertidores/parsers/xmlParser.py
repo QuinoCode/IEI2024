@@ -70,12 +70,7 @@ def execute(root):
                 "Localidad" : localidad,
                 "Provincia" : provincia
             }
-            if validToInsertMonument(item):
-                print ("Elemento " + item["Monumento"]["nombre"] + " Añadido")
-                result.append(item)
-            else:
-                print("Elemento " + item["Monumento"]["nombre"] + " Descartado")
-
+            result.append(item)
         json.dump(result, f, ensure_ascii=False, indent=4)
 
 def findReplace(desc):
