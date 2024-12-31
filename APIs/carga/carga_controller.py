@@ -2,11 +2,7 @@ from flask import Flask, jsonify, request
 
 api = Flask(__name__)
 
-# Ruta para servir la interfaz HTML de carga
-@api.route("/")
-def interfaz_carga():
-    # Devuelve el archivo carga.html desde el mismo directorio en el que está app.py
-    return send_from_directory('.', 'carga.html')
+
 # Metodo post de ejemplo para que copieis la estructura de como funciona 
 @api.post("/prueba") #URL que "escucha"
 def metodo_post_ejemplo():
