@@ -27,12 +27,7 @@ Además de devolver el json devolvemos el status code de HTTP
 #Se espera una petición del estilo (/buscar?localidad=Requena&codigo_postal=46340&provincia=Valencia&tipo=Puente)
 @api.get("/buscar")
 def buscar_monumento():
-    diccionario_respuesta = None
-    localidad = request.args.get('localidad')
-    codigo_postal = request.args.get('codigo_postal')
-    provincia = request.args.get('provincia')
-    tipo = request.args.get('tipo')
-    diccionario_respuesta = query_database(localidad, codigo_postal, provincia, tipo)
+    diccionario_respuesta = query_database(request)
     if not  diccionario_respuesta:
         return jsonify({"error": "No ha habido ningún resultado con esos parámetros"}), 404
     return jsonify(diccionario_respuesta), 200
