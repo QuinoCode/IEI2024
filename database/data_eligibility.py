@@ -134,7 +134,6 @@ def unificaLenguaje(provincia):
         "BIZKAIA": "VIZCAYA",
         "GIPUZKOA": "GUIPÚZCOA"
     }
-    # TODO: Aquí llamas un método que corrija con un mapa: { "Alacant": "Alicante", "València": "Valencia" }# Busca la provincia en el mapa y corrige si es necesario
     provincia_correcta = provincia_bilingue.get(provincia, provincia)
     if (provincia_correcta != provincia):
         print(f"El nombre de la provincia {provincia} ha sido estandarizado al castellano: {provincia_correcta}")

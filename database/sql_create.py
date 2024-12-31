@@ -57,9 +57,22 @@ class Sql_manager:
 
         return results
 
-
     def insertData(self, arrayJson):
+
         for item in arrayJson:
+            validProvincia, provincia_corregida = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
+            if validProvincia:
+                idProv = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Provincia').fetchone()[0]
+                idProv = str(int(idProv) + 1)
+                provincia = provincia_corregida.replace("'", "").replace('"', "")
+                self.dbcursor.execute(
+                    'INSERT INTO Provincia VALUES(?, ?)',
+                    (idProv, provincia)
+                )
+                self.conn.commit()
+            else:
+                break
+
             if validToInsertMonument(self.dbcursor, item["Monumento"]):
                 idDB = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Monumento').fetchone()[0]
                 idDB = str(int(idDB) + 1) 
@@ -75,17 +88,6 @@ class Sql_manager:
                     "INSERT INTO Monumento VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (idDB, monNombre, monTipo, monDireccion, monCodPost, monLatitud, monLongitud, monDescripcion, en_localidad)
                 ) 
-                
-                self.conn.commit()
-            validProvincia, provincia_corregida = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
-            if validProvincia:
-                idProv = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Provincia').fetchone()[0]
-                idProv = str(int(idProv) + 1)
-                provincia = provincia_corregida.replace("'", "").replace('"', "")
-                self.dbcursor.execute(
-                    'INSERT INTO Provincia VALUES(?, ?)',
-                    (idProv, provincia)
-                )
                 self.conn.commit()
 
             if validToInsertLocalidad(self.dbcursor, item["Localidad"].replace('"', "").replace("'", "")):
