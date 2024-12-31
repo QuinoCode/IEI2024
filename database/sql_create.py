@@ -23,11 +23,56 @@ class Sql_manager:
         self.dbcursor.execute('CREATE TABLE Provincia(codigo INTEGER PRIMARY KEY, nombre)')
         self.conn.commit()
 
-        
+    def query_monumento(self, localidad, codigo_postal, provincia, tipo):
+        self.dbcursor.execute("PRAGMA foreign_keys = ON;")
+        query = """SELECT m.* FROM Monumento m JOIN Localidad l ON m.en_localidad = l.nombre"""
+        conditions = []
+        values = []
 
+        if localidad:
+            conditions.append("l.nombre = ?")
+            values.append(str(localidad))
+        if codigo_postal:
+            conditions.append("m.codigo_postal = ?")
+            values.append(str(codigo_postal))
+        if provincia is not None:
+            conditions.append("l.en_provincia = ?")
+            values.append(str(provincia))
+        if tipo is not None:
+            conditions.append("m.tipo = ?")
+            values.append(tipo)
+
+        if conditions:
+            query += " WHERE " + " AND ".join(conditions)
+
+        print(query)
+        print(values)
+        self.dbcursor.execute(query, values)
+        results = self.dbcursor.fetchall()
+
+        if results:
+            print(results)
+        else: 
+            print("No results")
+
+        return results
 
     def insertData(self, arrayJson):
+
         for item in arrayJson:
+            validProvincia, provincia_corregida = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
+            if validProvincia:
+                idProv = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Provincia').fetchone()[0]
+                idProv = str(int(idProv) + 1)
+                provincia = provincia_corregida.replace("'", "").replace('"', "")
+                self.dbcursor.execute(
+                    'INSERT INTO Provincia VALUES(?, ?)',
+                    (idProv, provincia)
+                )
+                self.conn.commit()
+            else:
+                break
+
             if validToInsertMonument(self.dbcursor, item["Monumento"]):
                 idDB = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Monumento').fetchone()[0]
                 idDB = str(int(idDB) + 1) 
@@ -43,27 +88,16 @@ class Sql_manager:
                     "INSERT INTO Monumento VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (idDB, monNombre, monTipo, monDireccion, monCodPost, monLatitud, monLongitud, monDescripcion, en_localidad)
                 ) 
-                
                 self.conn.commit()
-            
+
             if validToInsertLocalidad(self.dbcursor, item["Localidad"].replace('"', "").replace("'", "")):
                 idLoc = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Localidad').fetchone()[0]
                 idLoc = str(int(idLoc) + 1)
                 localidad = item["Localidad"].replace("'", "").replace('"', "")
-                en_provincia = item["Provincia"].replace("'", "").replace('"', "")
+                en_provincia =  provincia_corregida.replace("'", "").replace('"', "") if provincia_corregida else ""
                 self.dbcursor.execute(
                     'INSERT INTO Localidad VALUES(?, ?, ?)',
                     (idLoc, localidad, en_provincia)
-                )
-                self.conn.commit()
-            
-            if validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", "")):
-                idProv = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Provincia').fetchone()[0]
-                idProv = str(int(idProv) + 1)
-                provincia = item["Provincia"].replace("'", "").replace('"', "")
-                self.dbcursor.execute(
-                    'INSERT INTO Provincia VALUES(?, ?)',
-                    (idProv, provincia)
                 )
                 self.conn.commit()
 

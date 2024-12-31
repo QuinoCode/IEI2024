@@ -2,3 +2,6 @@
 __pycache__
 data.json
 result.json
+properly_formated.json
+*.db
+

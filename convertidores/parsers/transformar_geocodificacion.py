@@ -84,7 +84,7 @@ def transformar_datos_con_geocodificacion(datos_entrada):
     return datos_transformados
 
 archivo_entrada = "edificios.json" if len(sys.argv) < 2 else sys.argv[1]
-archivo_salida = "properly_formated.json"
+archivo_salida = "datos/properly_formated.json"
 
 if __name__ == "__main__":
     if os.path.exists(archivo_entrada):
@@ -104,8 +104,6 @@ if __name__ == "__main__":
         # Guardar los datos transformados en la misma carpeta que el script
         with open(archivo_salida, "w", encoding="utf-8") as archivo_salida_json:
             json.dump(datos_transformados, archivo_salida_json, ensure_ascii=False, indent=4)
-
-        print(f"Transformación completada. Archivo generado: {archivo_salida}")
     else:
         print(f"Archivo {archivo_entrada} no encontrado.")
 
