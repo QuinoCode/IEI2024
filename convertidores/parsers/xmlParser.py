@@ -2,23 +2,26 @@ import xml.etree.ElementTree as ET
 import html
 import json
 import re
-from database.data_eligibility import validToInsertMonument
 
 result = []
 CLEANR = re.compile('<.*?>')
 
 def typeCheck(tipo):
     answer = None
-    if tipo in("Yacimientos arqueológicos","Puente") :
+    if tipo in("Yacimientos arqueológicos") :
         return tipo
+    elif tipo in ("Puentes","Puente"):
+        answer = "Puente"
     elif tipo in ("Iglesias y Ermitas", "Catedrales", "Sinagogas"):
         answer = "Iglesia-Ermita"
     elif tipo in ("Monasterios", "Santuarios"):
         answer = "Monasterio-Convento"
     elif tipo in ("Castillos", "Casas Nobles", "Torres"):
         answer = "Castillo-Fortaleza-Torre"
-    elif tipo in ("Reales Sitios","Palacio","Casa consistorial"):
+    elif tipo in ("Reales Sitios","Palacio", "Palacios","Casa consistorial"):
         answer = "Edificio Singular"
+    else:
+        answer = "Otros"
     return answer
 
 def execute(root):
@@ -77,7 +80,8 @@ def findReplace(desc):
     cdatad = desc.replace('<![CDATA[', "")
     endtag = re.sub(CLEANR, '', cdatad)
     brack = endtag.replace(']]>', "")
-    return html.unescape(brack)
+    n = brack.replace('\n', "")
+    return html.unescape(n)
     
 def main(filepath):
     tree = ET.parse(filepath)
