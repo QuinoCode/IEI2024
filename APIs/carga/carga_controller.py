@@ -30,11 +30,15 @@ def cargar_dataset():
     data = request.get_json()
     # Yo haría todo booleanos y si viene activado se carga el dataset
     todas = data.get('todas')
+    if (todas): 
+        #diccionario_respuesta = cargar_dataset_en_db([True, True, True])
+        return jsonify(diccionario_respuesta);
+
     cv = data.get('cv')
     cle = data.get('cle')
     eus = data.get('eus')
     # TODO: procesar la query internamente con una función del estilo
-    # diccionario_respuesta =  carga_dataset_en_db([todas,cv,cle,eus]) #importado base de datos
+    # diccionario_respuesta =  carga_dataset_en_db([cv,cle,eus]) #importado base de datos
     if not  diccionario_respuesta:
         return jsonify({"error": "No hubo respuesta de la base de datos"}), 404
     return jsonify(diccionario_respuesta), 200
