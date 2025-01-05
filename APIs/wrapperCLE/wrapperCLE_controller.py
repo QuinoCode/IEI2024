@@ -1,6 +1,8 @@
+import xml.etree.ElementTree as ET
 from flask import Flask, jsonify, request
 
 api = Flask(__name__)
+CLElocation = 'datos/entrega1/monumentos.xml'
 
 # Metodo post de ejemplo para que copieis la estructura de como funciona 
 @api.post("/prueba") #URL que "escucha"
@@ -12,6 +14,48 @@ def metodo_post_ejemplo():
     print(name) #Para que lo muestre por consola
     return jsonify({"received_name": name}), 200 
     #Cuando devolvemos la respuesta casi siempre tiene que ser un json, usamos jsonify sobre un mapa de python con formato de JSON (casi son lo mismo)
+
+def extract_children(element):
+    """Helper function to extract child elements as a dictionary."""
+    children_data = {}
+    for child in element:
+        # If a child has further children, call extract_children recursively
+        if len(child):
+            children_data[child.tag] = extract_children(child)
+        else:
+            children_data[child.tag] = child.text.strip() if child.text else ''
+    return children_data
+
+# Translation function to process XML into a structured dictionary
+def translate(root):
+    result = []
+    
+    for monumento in root.findall('monumento'):
+        datos_monumento = {}
+
+        for element in monumento:
+            # Check if the element has children
+            if len(element):
+                datos_monumento[element.tag] = extract_children(element)
+            else:
+                datos_monumento[element.tag] = element.text.strip() if element.text else ''
+        
+        result.append(datos_monumento)
+    return result
+
+# API route to process the XML and return the JSON response
+@api.get("/getCLE")
+def translate_api():
+    try:
+        tree = ET.parse(CLElocation)
+        root = tree.getroot()
+        result = translate(root)
+
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
 """
 Además de devolver el json devolvemos el status code de HTTP
 ------------------------------------------------------------

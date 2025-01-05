@@ -24,50 +24,66 @@ def typeCheck(tipo):
         answer = "Otros"
     return answer
 
-def execute(root):
-    with open('datos/properly_formated.json', 'w', encoding='utf-8') as f:
-        for monumento in root.iter('monumento'):
-            coords = monumento.find('coordenadas')
-            provincia = 'null'
-            localidad = 'null'
 
-            codpost = monumento.find('codigoPostal')
-            if codpost is not None:
-                codpost = codpost.text
+def translate(root):
+    result = []
+    for monumento in root.findall('monumento'):
+        datos_monumento = {}
+
+        for element in monumento:
+            if len(element):
+                datos_monumento[element.tag] = extract_children(element)
             else:
-                codpost = ""
+                datos_monumento[element.tag] = element.text.strip()
+        result.append(datos_monumento)
+    print(result)
+    return result
 
-            poblacion = monumento.find('poblacion')
+def extract_children(element):
+    children_data = {}
+    for child in element:
+        # If a child has further children, call extract_children recursively
+        if len(child):
+            children_data[child.tag] = extract_children(child)
+        else:
+            children_data[child.tag] = child.text.strip() if child.text else ''
+    return children_data
+
+def execute(listCV):
+    with open('datos/properly_formated.json', 'w', encoding='utf-8') as f:
+        for monumento in listCV:
+            nombre = monumento["nombre"]
+
+            coords = monumento["coordenadas"]
+            latitud = coords["latitud"]
+            longitud = coords["longitud"]
+
+            codpost = monumento.get("codigoPostal", "")
+
+            poblacion = monumento["poblacion"]
             if poblacion is not None:
-                localidad = poblacion.find('localidad').text
-                provincia = poblacion.find('provincia').text
-            else: 
-                localidad = ""
-                provincia = ""
+                localidad = poblacion['localidad']
+                provincia = poblacion['provincia']
 
-            calle = monumento.find('calle')
-            if calle is not None:
-                calle = calle.text
-            else: 
-                calle = ""
+            calle = monumento.get("calle", "")
 
-            descripcion = monumento.find('Descripcion')
+            descripcion = monumento["Descripcion"]
             if descripcion is not None :
-                descripcion = findReplace(descripcion.text)
+                descripcion = findReplace(descripcion)
             else: 
                 descripcion = ""
 
-            tipo = monumento.find('tipoMonumento').text
+            tipo = monumento["tipoMonumento"]
             tip = typeCheck(tipo)    
 
             item = {
                 "Monumento" : {
-                    "nombre" : monumento.find('nombre').text,
+                    "nombre" : nombre,
                     "tipo" : tip,
                     "direccion" : calle,
                     "codigo_postal" : codpost,
-                    "longitud" : coords.find('longitud').text,
-                    "latitud" : coords.find('latitud').text,
+                    "longitud" : longitud,
+                    "latitud" : latitud,
                     "descripcion" : descripcion
                 }, 
                 "Localidad" : localidad,
@@ -86,7 +102,8 @@ def findReplace(desc):
 def main(filepath):
     tree = ET.parse(filepath)
     root = tree.getroot()
-    execute(root)
+    list = translate(root)
+    execute(list)
 
 if __name__ == '__main__':
-    main('datos/monumentos.xml')
+    main('datos/entrega1/monumentos.xml')

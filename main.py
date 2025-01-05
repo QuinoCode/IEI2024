@@ -48,7 +48,7 @@ try:
 
     sql_manager.main(data)
     
-except:
-    print("Algo ha sucedido, probablemente no se ha proporcionado la ruta del archivo a tratar")
+except Exception as exception:
+    print("Algo ha sucedido, probablemente no se ha proporcionado la ruta del archivo a tratar ", exception)
 
 
