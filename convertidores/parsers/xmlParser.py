@@ -6,6 +6,14 @@ import re
 result = []
 CLEANR = re.compile('<.*?>')
 
+def retrieveDataFromAPI():
+    url_destination = "http://localhost:5003"
+    response = requests.get(url_destination)
+
+    if (response.status_code == 200):
+        return response.json()
+    return {"error": "Something went wrong when fetching data from CLE API"}
+
 def typeCheck(tipo):
     answer = None
     if tipo in("Yacimientos arqueológicos") :

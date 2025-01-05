@@ -1,4 +1,5 @@
 import csv
+import requests
 import json
 import time
 from convertidores.Scrapper.scrapper import Scrapper
@@ -9,6 +10,13 @@ from urllib.parse import quote
 from urllib.parse import urlencode
 
 destination = 'datos/properly_formated.json'
+def retrieveDataFromAPI():
+    url_destination = "http://localhost:5002"
+    response = requests.get(url_destination)
+
+    if (response.status_code == 200):
+        return response.json()
+    return {"error": "Something went wrong when fetching data from CV API"}
 
 def csvToJson(csvFile):
     listCSV = []   

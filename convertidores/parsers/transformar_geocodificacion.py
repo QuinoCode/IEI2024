@@ -3,6 +3,14 @@ import json
 import os
 import sys
 
+def retrieveDataFromAPI():
+    url_destination = "http://localhost:5004"
+    response = requests.get(url_destination)
+
+    if (response.status_code == 200):
+        return response.json()
+    return {"error": "Something went wrong when fetching data from EUS API"}
+
 # Función para transformar el tipo basado en nombre y descripción
 def transformar_tipo_con_parroquia(document_name, document_description):
     text = (document_name or "") + " " + (document_description or "")

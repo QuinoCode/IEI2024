@@ -57,8 +57,8 @@ class Sql_manager:
 
         return results
 
-    def insertData(self, arrayJson):
 
+    def insertData(self, arrayJson):
         for item in arrayJson:
             validProvincia, provincia_corregida = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
             if validProvincia:
@@ -70,9 +70,9 @@ class Sql_manager:
                     (idProv, provincia)
                 )
                 self.conn.commit()
-            else:
-                break
 
+            if not item["Provincia"]:
+                break
             if validToInsertMonument(self.dbcursor, item["Monumento"]):
                 idDB = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Monumento').fetchone()[0]
                 idDB = str(int(idDB) + 1) 
