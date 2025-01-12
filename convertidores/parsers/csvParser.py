@@ -212,6 +212,7 @@ def direccion_codigo_postal(latitud, longitud):
     if postcode == None:
         postcodeOk = "postcode MAL"
 
+    print(f"latitud : {latitud} | longitud : {longitud}")
     print(f"{direccionOk} - {postcodeOk}")
     return direccion, postcode
 
