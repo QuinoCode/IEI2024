@@ -163,23 +163,15 @@ def direccion_codigo_postal(latitud, longitud):
     if latitud != "ERROR" and longitud != "ERROR":
         time.sleep(2)
 
-         # Define la URL base
-        url = "https://us1.locationiq.com/v1/reverse"
+        # Define la URL base
+        url = f"https://us1.locationiq.com/v1/reverse?key=pk.6fec0eca34494199b1038a312bddbb33&lat={latitud}&lon={longitud}&format=json"
 
-        # Define los parámetros de la consulta
-        params = {
-            "key": "pk.6fec0eca34494199b1038a312bddbb33",
-            "lat": latitud,
-            "lon": longitud,
-            "format": "json"
-        }
+        try:
+            # Realiza la solicitud GET
+            response = requests.get(url)
 
-        # Realiza la solicitud GET
-        response = requests.get(url, params=params)
-
-        # Verifica el estado de la respuesta y muestra el resultado
-        if response.status_code == 200:
-            data = response.json()  # Convierte la respuesta a un diccionario
+            # Convierte la respuesta a un diccionario
+            data = response.json()
     
             # Extrae y genera la direccion
             road = data.get("address", {}).get("road", "ERROR")
@@ -201,9 +193,10 @@ def direccion_codigo_postal(latitud, longitud):
 
             # Extrae el codigo postal
             postcode = data.get("address", {}).get("postcode", None)
-        else:
-            print(f"Error: {response.status_code}")
-            print(response.text)  # Muestra el mensaje de error en caso de fallo
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error al realizar la solicitud: {e}")
+
     direccionOk = "direccion OK"
     postcodeOk = "postcode OK"
 
@@ -212,7 +205,6 @@ def direccion_codigo_postal(latitud, longitud):
     if postcode == None:
         postcodeOk = "postcode MAL"
 
-    print(f"latitud : {latitud} | longitud : {longitud}")
     print(f"{direccionOk} - {postcodeOk}")
     return direccion, postcode
 
