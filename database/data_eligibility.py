@@ -108,7 +108,7 @@ def unificarEstiloProvincia(provincia):
     provincia_estandarizada = provincia.upper()
     if (provincia_estandarizada != provincia):
         print(f"El nombre de la provincia {provincia} ha sido estandarizada a mayúsculas: {provincia_estandarizada}")
-        return provincia_estandarizada
+    return provincia_estandarizada
 
 def añadirAcentoAProvincia(provincia):
     provincia_acento = {

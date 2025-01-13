@@ -84,7 +84,7 @@ class Scrapper:
     def retrieve_data(self):
         longitude = float(self.longitudeDegree.get_attribute("value").replace(",","."))
         latitude = float(self.latitudeDegree.get_attribute("value").replace(",","."))
-        if self.longitudeOrientation.get_attribute("value") == "E": 
+        if self.longitudeOrientation.get_attribute("value") == "W": 
             longitude = -longitude
             print(longitude)
         if self.latitudeOrientation.get_attribute("value") == "S": 

@@ -151,7 +151,7 @@ def obtainCoordenatesFromScrapper(data):
 
     for wrapper in data:
         monument = wrapper["Monumento"]
-        monument["longitud"], monument["latitud"] = scrapper_instance.process_data(monument["longitud"], monument["latitud"])
+        monument["longitud"], monument["latitud"] = scrapper_instance.process_data(monument["latitud"], monument["longitud"])
 
     scrapper_instance.close_driver()
     return data
