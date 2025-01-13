@@ -19,15 +19,14 @@ class Scrapper:
         self.wait = WebDriverWait(self.driver, 10)
 
         self.type_of_coordenate_system = None
+        self.decimal_switcher = None
         self.x_coordenate = None
         self.y_coordenate = None
         self.transform_button = None
         self.longitudeDegree = None
-        self.longitudeMinutes = None
-        self.longitudeSeconds = None
+        self.longitudeOrientation = None
         self.latitudeDegree = None
-        self.latitudeMinutes = None
-        self.latitudeSeconds = None
+        self.latitudeOrientation = None
 
     #Instantiate a service with the driver
     def instantiate_service_with_driver(self):
@@ -45,19 +44,20 @@ class Scrapper:
         self.driver.get("https://www.ign.es/WebServiceTransformCoordinates/")
 
         self.type_of_coordenate_system = self.driver.find_element(By.ID, "sourceCRSCombo")
+        self.decimal_switcher = self.driver.find_element(By.ID, "targetDegreeCombo")
         self.x_coordenate = self.driver.find_element(By.ID, "inputX")
         self.y_coordenate = self.driver.find_element(By.ID, "inputY")
         self.transform_button = self.driver.find_element(By.ID, "transformPoint")
-        self.longitudeDegree = self.driver.find_element(By.ID, "outputLongitudeDegree")
-        self.longitudeMinutes = self.driver.find_element(By.ID, "outputLongitudeMinutes")
-        self.longitudeSeconds = self.driver.find_element(By.ID, "outputLongitudeSeconds")
-        self.latitudeDegree = self.driver.find_element(By.ID, "outputLatitudeDegree")
-        self.latitudeMinutes = self.driver.find_element(By.ID, "outputLatitudeMinutes")
-        self.latitudeSeconds = self.driver.find_element(By.ID, "outputLatitudeSeconds")
+        self.longitudeDegree = self.driver.find_element(By.ID, "outputLongitudeDegreeDec")
+        self.longitudeOrientation = self.driver.find_element(By.ID, "outputLongitudeEO")
+        self.latitudeDegree = self.driver.find_element(By.ID, "outputLatitudeDegreeDec")
+        self.latitudeOrientation = self.driver.find_element(By.ID, "outputLatitudeNS")
 
     def set_up_site(self):
         self.type_of_coordenate_system.send_keys("UTM")
         self.type_of_coordenate_system.send_keys(Keys.RETURN)
+        self.decimal_switcher.send_keys("G")
+        self.decimal_switcher.send_keys(Keys.RETURN)
 
     def close_driver(self):
         self.driver.close()
@@ -82,8 +82,15 @@ class Scrapper:
         return self.retrieve_data()
 
     def retrieve_data(self):
-        longitude = self.longitudeDegree.get_attribute("value") + " " + self.longitudeMinutes.get_attribute("value") + " " + self.longitudeSeconds.get_attribute("value")
-        latitude = self.latitudeDegree.get_attribute("value") + " " + self.latitudeMinutes.get_attribute("value") + " " + self.latitudeSeconds.get_attribute("value")
+        longitude = float(self.longitudeDegree.get_attribute("value").replace(",","."))
+        latitude = float(self.latitudeDegree.get_attribute("value").replace(",","."))
+        if self.longitudeOrientation.get_attribute("value") == "E": 
+            longitude = -longitude
+            print(longitude)
+        if self.latitudeOrientation.get_attribute("value") == "S": 
+            latitude = -latitude
+            print(latitude)
+
         return longitude, latitude
 
     def element_has_text(self, element):
