@@ -197,15 +197,7 @@ def direccion_codigo_postal(latitud, longitud):
         except requests.exceptions.RequestException as e:
             print(f"Error al realizar la solicitud: {e}")
 
-    direccionOk = "direccion OK"
-    postcodeOk = "postcode OK"
-
-    if direccion == None:
-        direccionOk = "direccion MAL"
-    if postcode == None:
-        postcodeOk = "postcode MAL"
-
-    print(f"lat:{latitud} lon:{longitud} -> {direccionOk} - {postcodeOk}")
+    print(f"lat:{latitud} lon:{longitud} -> direccion:{direccion} - postcode:{postcode}")
     return direccion, postcode
 
 def obtainPostalCodeAddress(data):
