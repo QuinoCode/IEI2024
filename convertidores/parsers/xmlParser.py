@@ -114,4 +114,4 @@ def main(filepath):
     execute(list)
 
 if __name__ == '__main__':
-    main('datos/entrega1/monumentos.xml')
+    main('datos/entrega2/monumentos.xml')
