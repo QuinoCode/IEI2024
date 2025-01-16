@@ -31,7 +31,7 @@ def convertir_csv_a_json(file):
     csvParser.main(file)
 
 def convertir_xml_a_json(file):
-    xmlParser.main(file)
+    xmlParser.main()
 
 def convertir_json_a_json(file):
     call(["python3", "convertidores/parsers/transformar_geocodificacion.py", file])
@@ -43,7 +43,7 @@ try:
     location_of_parsed_data = "./datos/properly_formated.json"
 
     file = open(location_of_parsed_data)
-    data = json.load(file)
+    data = json.load(file, encoding="utf-8")
     sql_manager = Sql_manager()
 
     sql_manager.main(data)

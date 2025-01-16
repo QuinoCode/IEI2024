@@ -1,10 +1,10 @@
-import requests
 from convertidores.parsers import csvParser
 from convertidores.parsers import xmlParser
 from convertidores.parsers import transformar_geocodificacion
 from convertidores.parsers.csvParser import main
 from convertidores.parsers.xmlParser import main
 from convertidores.parsers.transformar_geocodificacion import main
+from flask import jsonify, request
 
 # Metodo post de ejemplo para que copieis la estructura de como funciona 
 def cargar_dataset_service():
@@ -18,7 +18,7 @@ def cargar_dataset_service():
         cle_return = retrieve_CLE()
         eus_return = retrieve_EUS()
         diccionario_respuesta = squash_json_feedback_results_into_single_json([cv_return, cle_return, eus_return])
-        return jsonify(diccionario_respuesta);
+        return jsonify(diccionario_respuesta)
 
     cv_requested = data.get('cv')
     if (cv_requested):
