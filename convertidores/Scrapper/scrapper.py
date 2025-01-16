@@ -11,9 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 class Scrapper:
     def __init__(self):
-        self.geckodriver_path = os.path.join(os.path.dirname(__file__), "../../../geckodriver")
-        self.install_dir = "/usr/bin"
-        self.binary_loc = os.path.join(self.install_dir, "firefox")
+        self.geckodriver_path = os.path.join(os.path.dirname(__file__), "../../../geckodriver.exe")
 
         self.driver = self.instantiate_service_with_driver()
         self.wait = WebDriverWait(self.driver, 10)
@@ -30,13 +28,9 @@ class Scrapper:
 
     #Instantiate a service with the driver
     def instantiate_service_with_driver(self):
-        service = FirefoxService(self.geckodriver_path)
         opts = webdriver.FirefoxOptions()
-        opts.binary_location = self.binary_loc
-        opts.add_argument("-profile")
-        opts.add_argument("/home/ayuda106/snap/firefox/common/.mozilla/firefox/1hjffc8i.selenium-profile")
         #Assign the service to the driver and the options
-        driver = webdriver.Firefox(service=service, options=opts)
+        driver = webdriver.Firefox(options=opts)
         return driver
 
 

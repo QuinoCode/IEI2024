@@ -1,7 +1,5 @@
 import subprocess
 import time
-import sys
-import json
 import os
 from subprocess import call
 from APIs.carga import *
@@ -18,6 +16,7 @@ modules = [
     'APIs.wrapperCV.wrapperCV_controller',
     'APIs.wrapperCLE.wrapperCLE_controller',
     'APIs.wrapperEUS.wrapperEUS_controller',
+    'APIs.carga.interfaz_carga',
     'APIs.busqueda.busqueda_controller'
 ]
 
@@ -26,7 +25,7 @@ processes = {}
 
 def start_script(module):
     print(f"[+] Arrancando {module}...")
-    return subprocess.Popen(['python3','-m', module], stdout=None, stderr=None)
+    return subprocess.Popen(['python','-m', module], stdout=None, stderr=None)
 
 def monitor_processes():
     while True:

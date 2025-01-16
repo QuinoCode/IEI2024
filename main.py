@@ -1,6 +1,7 @@
 # Este script recibe un data set con extension csv, xml o JSON y lo parsea a JSON para posteriormente introducirlo en la base de datos sqlite. 
 
 # Checkear que tipo de parámetro se usa 
+import os
 import sys
 import json
 from subprocess import call

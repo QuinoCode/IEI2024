@@ -18,6 +18,7 @@ def retrieveDataFromAPI():
         return response.json()
     return {"error": "Something went wrong when fetching data from CV API"}
 
+# Convertir el CSV a JSON
 def csvToJson(csvFile):
     listCSV = []   
     with open(csvFile, encoding='utf-8') as csvf:
@@ -41,6 +42,7 @@ def csvToJson(csvFile):
             listCSV.append(item)
     return listCSV
 
+# Obtener la clasificación a traves de codClasificacion
 def convertCodClasificacion(codClasificacion):
     if codClasificacion is None:
         return None
@@ -50,6 +52,7 @@ def convertCodClasificacion(codClasificacion):
     
     return "Bienes muebles 1ª"
 
+# Obtener la categoría a traves de codCategoria
 def convertCodCategoria(codCategoria):
     match codCategoria:
         case "1":
@@ -79,18 +82,21 @@ def convertCodCategoria(codCategoria):
         case _:
             return None
 
+# Obtener la categoria del monumento
 def mappingCategoria(json):
     if json["categoria"] is None:
         return convertCodCategoria(json["codcategoria"])
     
     return json["categoria"]
 
+# Obtner la clasificacion del monumento
 def mappingClasificacion(json):
     if json["clasificacion"] is None:
         return convertCodClasificacion(json["codclasificacion"])
     
     return json["clasificacion"]
 
+# Obtner el tipo del monumento a partir de la denominacion, categoria y clasificacion del monumento
 def mappingTipo (json):
     denominacion = json["denominacion"].lower()
     categoria = mappingCategoria(json)
@@ -116,6 +122,7 @@ def mappingTipo (json):
 
     return "Otros"
 
+# Obtener la descripcion del monumento a partir de la categoria y clasificacion del monumento
 def mappingDescripcion(json):
     categoria = mappingCategoria(json)
     clasificacion = mappingClasificacion(json)
@@ -123,6 +130,7 @@ def mappingDescripcion(json):
         return "'"+ (categoria + " - " + clasificacion).replace('"', "") +"'"
     return None
 
+# Generar un JSON con el esquema global a partir del CSV convertido en JSON
 def mappingsToJson(listCSV):
     jsonMapped = []
     for json in listCSV:
@@ -142,8 +150,7 @@ def mappingsToJson(listCSV):
         jsonMapped.append(item)
     return jsonMapped
 
-# nombre tipo direccion codigo_postal longitud latitud descripcion, localidad provincia
-
+# Generar JSON con las coordenadas reales de latitud y longitud
 def obtainCoordenatesFromScrapper(data):
     scrapper_instance = Scrapper()
     scrapper_instance.stablish_connection_and_initialize_variables()
@@ -156,6 +163,7 @@ def obtainCoordenatesFromScrapper(data):
     scrapper_instance.close_driver()
     return data
 
+# Obtener direccion y codigo postal a partir de longitud y latitud
 def direccion_codigo_postal(latitud, longitud):
     direccion = None
     postcode = None
@@ -173,10 +181,13 @@ def direccion_codigo_postal(latitud, longitud):
             # Convierte la respuesta a un diccionario
             data = response.json()
     
-            # Extrae y genera la direccion
+            # Extraer la calle
             road = data.get("address", {}).get("road", "ERROR")
+
+            # Extraer el número de vivienda
             house_number = data.get("address", {}).get("house_number", "ERROR")
 
+            # Generar la direccion a partir de la calle y el número de vivienda
             if road != "ERROR" and house_number != "ERROR":
                 direccion = f"{road} {house_number}"
             elif road != "ERROR":
@@ -185,12 +196,14 @@ def direccion_codigo_postal(latitud, longitud):
             # Extrae el codigo postal
             postcode = data.get("address", {}).get("postcode", None)
 
+        # Imprimir los datos de entrada para saber si se han generado la direccion y el código postal
         except requests.exceptions.RequestException as e:
             print(f"Error al realizar la solicitud: {e}")
 
     print(f"lat:{latitud} lon:{longitud} -> direccion:{direccion} - postcode:{postcode}")
     return direccion, postcode
 
+# Generar JSON con direccion y código postal a partir de la latitud y longitud
 def obtainPostalCodeAddress(data):
     for wrapper in data:
         monument = wrapper["Monumento"]
