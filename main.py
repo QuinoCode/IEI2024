@@ -1,6 +1,7 @@
 # Este script recibe un data set con extension csv, xml o JSON y lo parsea a JSON para posteriormente introducirlo en la base de datos sqlite. 
 
 # Checkear que tipo de parámetro se usa 
+import os
 import sys
 import json
 from subprocess import call
@@ -42,7 +43,7 @@ try:
     convertir_datos_a_json(tipo_de_datos)
     location_of_parsed_data = "./datos/properly_formated.json"
 
-    file = open(location_of_parsed_data)
+    file = open(location_of_parsed_data, encoding='latin-1')
     data = json.load(file)
     sql_manager = Sql_manager()
 
