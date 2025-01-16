@@ -2,18 +2,24 @@ import xml.etree.ElementTree as ET
 import html
 import json
 import re
+import requests
 
 result = []
 CLEANR = re.compile('<.*?>')
 
+# Función que realiza petición al API
 def retrieveDataFromAPI():
-    url_destination = "http://localhost:5003"
+    url_destination = "http://localhost:5003/getCLE"
     response = requests.get(url_destination)
 
+    #Si encuentra el elemento del API, devuelve un json de la respuesta del API
     if (response.status_code == 200):
+        print("API response correct")
         return response.json()
     return {"error": "Something went wrong when fetching data from CLE API"}
 
+
+#Función responsable de la conversión de tipos de monumento
 def typeCheck(tipo):
     answer = None
     if tipo in("Yacimientos arqueológicos") :
@@ -32,34 +38,11 @@ def typeCheck(tipo):
         answer = "Otros"
     return answer
 
-
-def translate(root):
-    result = []
-    for monumento in root.findall('monumento'):
-        datos_monumento = {}
-
-        for element in monumento:
-            if len(element):
-                datos_monumento[element.tag] = extract_children(element)
-            else:
-                datos_monumento[element.tag] = element.text.strip()
-        result.append(datos_monumento)
-    print(result)
-    return result
-
-def extract_children(element):
-    children_data = {}
-    for child in element:
-        # If a child has further children, call extract_children recursively
-        if len(child):
-            children_data[child.tag] = extract_children(child)
-        else:
-            children_data[child.tag] = child.text.strip() if child.text else ''
-    return children_data
-
-def execute(listCV):
+#Función principal que genera el json final
+def execute(response):
     with open('datos/properly_formated.json', 'w', encoding='utf-8') as f:
-        for monumento in listCV:
+        for monumento in response:
+            #obtenemos los datos del json respuesta
             nombre = monumento["nombre"]
 
             coords = monumento["coordenadas"]
@@ -84,6 +67,7 @@ def execute(listCV):
             tipo = monumento["tipoMonumento"]
             tip = typeCheck(tipo)    
 
+            #generamos un objeto para guardar en el json formateado
             item = {
                 "Monumento" : {
                     "nombre" : nombre,
@@ -98,8 +82,10 @@ def execute(listCV):
                 "Provincia" : provincia
             }
             result.append(item)
+        #al terminar el bucle, se guarda la lista generada como json
         json.dump(result, f, ensure_ascii=False, indent=4)
 
+#Función para limpiar el código de elementos XML. Usa un CLEANR para los tags, y replaces para cdata y saltos de línea
 def findReplace(desc):
     cdatad = desc.replace('<![CDATA[', "")
     endtag = re.sub(CLEANR, '', cdatad)
@@ -107,11 +93,10 @@ def findReplace(desc):
     n = brack.replace('\n', "")
     return html.unescape(n)
     
-def main(filepath):
-    tree = ET.parse(filepath)
-    root = tree.getroot()
-    list = translate(root)
-    execute(list)
+#Main busca la respuesta para poder ejecutar el resto del código.
+def main():
+    response = retrieveDataFromAPI()
+    execute(response)
 
 if __name__ == '__main__':
-    main('datos/entrega1/monumentos.xml')
+    main()

@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from flask import Flask, jsonify, request
 
 api = Flask(__name__)
-CLElocation = 'datos/entrega1/monumentos.xml'
+CLElocation = 'datos/entregafinal/monumentos.xml'
 
 # Metodo post de ejemplo para que copieis la estructura de como funciona 
 @api.post("/prueba") #URL que "escucha"
@@ -38,7 +38,7 @@ def translate(root):
             if len(element):
                 datos_monumento[element.tag] = extract_children(element)
             else:
-                datos_monumento[element.tag] = element.text.strip() if element.text else ''
+                datos_monumento[element.tag] = element.text.strip() if element.text else None
         
         result.append(datos_monumento)
     return result
