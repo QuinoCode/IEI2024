@@ -1,6 +1,44 @@
+import csv
 from flask import Flask, jsonify, request
 
 api = Flask(__name__)
+
+CVlocation = 'datos/entrega2/bienes_inmuebles_interes_cultural.csv'
+
+# Translation function to process CSV into a JSON
+def csvToJson(csvFile):
+    listCSV = []   
+    with open(csvFile, encoding='utf-8') as csvf:
+        csvRead = csv.reader(csvf)
+        next(csvRead)
+        for row in  csvRead:
+            # IGCPV denominación provincia municipio UTMeste UTMnorte codclasificacion clasificacion codcategoria categoria
+            campos = row[0].split(';')
+            item = {
+                "IGCPV": campos[0],
+                "denominacion": campos[1],
+                "provincia": campos[2],
+                "municipio": campos[3],
+                "UTMeste": campos[4],
+                "UTMnorte": campos[5],
+                "codclasificacion": campos[6],
+                "clasificacion": campos[7],
+                "codcategoria": campos[8],
+                "categoria": campos[9]
+            }
+            listCSV.append(item)
+    return listCSV
+
+# API route to process the CSV and return the JSON response
+@api.get("/getCV")
+def translate_api():
+    try:
+        result = csvToJson(CVlocation)
+
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 # Metodo post de ejemplo para que copieis la estructura de como funciona 
 @api.post("/prueba") #URL que "escucha"
