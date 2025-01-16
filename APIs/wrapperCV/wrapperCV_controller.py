@@ -1,5 +1,6 @@
 import csv
-from flask import Flask, jsonify, request
+from flask import Flask, Response, request
+import json  # Importa json para personalizar la respuesta
 
 api = Flask(__name__)
 
@@ -9,24 +10,25 @@ CVlocation = 'datos/entrega2/bienes_inmuebles_interes_cultural.csv'
 def csvToJson(csvFile):
     listCSV = []   
     with open(csvFile, encoding='utf-8') as csvf:
-        csvRead = csv.reader(csvf)
-        next(csvRead)
-        for row in  csvRead:
-            # IGCPV denominación provincia municipio UTMeste UTMnorte codclasificacion clasificacion codcategoria categoria
-            campos = row[0].split(';')
-            item = {
-                "IGCPV": campos[0],
-                "denominacion": campos[1],
-                "provincia": campos[2],
-                "municipio": campos[3],
-                "UTMeste": campos[4],
-                "UTMnorte": campos[5],
-                "codclasificacion": campos[6],
-                "clasificacion": campos[7],
-                "codcategoria": campos[8],
-                "categoria": campos[9]
-            }
-            listCSV.append(item)
+        # Define csv.reader with the correct delimiter
+        csvRead = csv.reader(csvf, delimiter=';')
+        next(csvRead)  # Skip the header row
+        for row in csvRead:
+            # Ensure the row has the expected number of fields to avoid IndexError
+            if len(row) >= 10:
+                item = {
+                    "IGCPV": row[0],
+                    "denominacion": row[1],
+                    "provincia": row[2],
+                    "municipio": row[3],
+                    "UTMeste": row[4],
+                    "UTMnorte": row[5],
+                    "codclasificacion": row[6],
+                    "clasificacion": row[7],
+                    "codcategoria": row[8],
+                    "categoria": row[9]
+                }
+                listCSV.append(item)
     return listCSV
 
 # API route to process the CSV and return the JSON response
@@ -34,9 +36,9 @@ def csvToJson(csvFile):
 def translate_api():
     try:
         result = csvToJson(CVlocation)
-
-        return jsonify(result), 200
-
+        # Usar json.dumps para evitar ensure_ascii=True y respetar los acentos
+        response = Response(json.dumps(result, ensure_ascii=False), mimetype='application/json')
+        return response, 200
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
