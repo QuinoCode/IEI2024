@@ -38,7 +38,7 @@ def translate(root):
             if len(element):
                 datos_monumento[element.tag] = extract_children(element)
             else:
-                datos_monumento[element.tag] = element.text.strip() if element.text else ''
+                datos_monumento[element.tag] = element.text.strip() if element.text else None
         
         result.append(datos_monumento)
     return result
