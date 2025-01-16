@@ -176,20 +176,11 @@ def direccion_codigo_postal(latitud, longitud):
             # Extrae y genera la direccion
             road = data.get("address", {}).get("road", "ERROR")
             house_number = data.get("address", {}).get("house_number", "ERROR")
-            city = data.get("address", {}).get("city", "ERROR")
 
-            calle_completa = "ERROR"
             if road != "ERROR" and house_number != "ERROR":
-                calle_completa = f"{road} {house_number}"
+                direccion = f"{road} {house_number}"
             elif road != "ERROR":
-                calle_completa = road
-
-            if calle_completa != "ERROR" and city != "ERROR":
-                direccion = f"{calle_completa}, {city}"
-            elif calle_completa != "ERROR":
-                direccion = f"{calle_completa}, CIUDAD DESCONOCIDA"
-            elif city != "ERROR":
-                direccion = city
+                direccion = road
 
             # Extrae el codigo postal
             postcode = data.get("address", {}).get("postcode", None)
