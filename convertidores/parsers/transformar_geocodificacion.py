@@ -4,7 +4,7 @@ import os
 import sys
 
 def retrieveDataFromAPI():
-    url_destination = "http://localhost:5004"
+    url_destination = "http://localhost:5004/getEUS"
     response = requests.get(url_destination)
 
     if (response.status_code == 200):
@@ -45,7 +45,6 @@ def coordenadas_a_direccion(latitud, longitud):
 
 # Función para validar el código postal
 def validar_codigo_postal(codigo_postal):
-    if (codigo_postal == ''): return None
     try:
         cp_int = int(codigo_postal)
         if cp_int >= 53000:
@@ -90,11 +89,21 @@ def transformar_datos_con_geocodificacion(datos_entrada):
 
         datos_transformados.append(nuevo_item)
     return datos_transformados
+def saveDataToFile():
+    data = retrieveDataFromAPI()  # Llama a la función para obtener los datos
+    file_path = "response_data.json"  # Nombre del archivo a crear
+    
+    with open(file_path, "w") as file:  # Abre el archivo en modo escritura
+        json.dump(data, file, indent=4)  # Guarda los datos en formato JSON con sangría
+    
+    return file_path
 
-archivo_entrada = "edificios.json" if len(sys.argv) < 2 else sys.argv[1]
-archivo_salida = "datos/properly_formated.json"
+archivo_entrada = saveDataToFile() if len(sys.argv) < 2 else sys.argv[1]
+archivo_salida = "properly_formated.json"
 
 if __name__ == "__main__":
+    
+    
     if os.path.exists(archivo_entrada):
         # Preprocesar el archivo para eliminar todas las apariciones vacías de 'address'
         with open(archivo_entrada, "r", encoding="utf-8") as f:
@@ -112,6 +121,9 @@ if __name__ == "__main__":
         # Guardar los datos transformados en la misma carpeta que el script
         with open(archivo_salida, "w", encoding="utf-8") as archivo_salida_json:
             json.dump(datos_transformados, archivo_salida_json, ensure_ascii=False, indent=4)
+
+        print(f"Transformación completada. Archivo generado: {archivo_salida}")
     else:
         print(f"Archivo {archivo_entrada} no encontrado.")
+
 
