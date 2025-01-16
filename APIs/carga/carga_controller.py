@@ -28,7 +28,7 @@ Además de devolver el json devolvemos el status code de HTTP
 @api.post("/carga")
 def cargar_dataset():
     diccionario_respuesta = None
-     diccionario_respuesta = cargar_dataset_service(request) #importado base de datos
+    diccionario_respuesta = cargar_dataset_service() #importado base de datos
     if not  diccionario_respuesta:
         return jsonify({"error": "No hubo respuesta de la base de datos"}), 404
     return jsonify(diccionario_respuesta), 200

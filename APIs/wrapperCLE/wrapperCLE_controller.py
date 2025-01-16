@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 from flask import Flask, jsonify, request
 
 api = Flask(__name__)
-CLElocation = 'datos/entregafinal/monumentos.xml'
+CLElocation = 'datos/entrega2/monumentos.xml'
 
 # Metodo post de ejemplo para que copieis la estructura de como funciona 
 @api.post("/prueba") #URL que "escucha"

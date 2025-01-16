@@ -151,56 +151,58 @@ def obtainCoordenatesFromScrapper(data):
 
     for wrapper in data:
         monument = wrapper["Monumento"]
-        monument["longitud"], monument["latitud"] = scrapper_instance.process_data(monument["longitud"], monument["latitud"])
+        monument["longitud"], monument["latitud"] = scrapper_instance.process_data(monument["latitud"], monument["longitud"])
 
     scrapper_instance.close_driver()
     return data
 
+def direccion_codigo_postal(latitud, longitud):
+    direccion = None
+    postcode = None
+
+    if latitud != "ERROR" and longitud != "ERROR":
+        time.sleep(2)
+
+        # Define la URL base
+        url = f"https://us1.locationiq.com/v1/reverse?key=pk.6fec0eca34494199b1038a312bddbb33&lat={latitud}&lon={longitud}&format=json"
+
+        try:
+            # Realiza la solicitud GET
+            response = requests.get(url)
+
+            # Convierte la respuesta a un diccionario
+            data = response.json()
+    
+            # Extrae y genera la direccion
+            road = data.get("address", {}).get("road", "ERROR")
+            house_number = data.get("address", {}).get("house_number", "ERROR")
+
+            if road != "ERROR" and house_number != "ERROR":
+                direccion = f"{road} {house_number}"
+            elif road != "ERROR":
+                direccion = road
+
+            # Extrae el codigo postal
+            postcode = data.get("address", {}).get("postcode", None)
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error al realizar la solicitud: {e}")
+
+    print(f"lat:{latitud} lon:{longitud} -> direccion:{direccion} - postcode:{postcode}")
+    return direccion, postcode
+
 def obtainPostalCodeAddress(data):
     for wrapper in data:
         monument = wrapper["Monumento"]
-        API_KEY = "06a875f723d14e6798dadfb93eced894"
-        if monument["latitud"] != "Error" and monument["longitud"] != "Error":
-            time.sleep(1)
-            try:
-                query_params = {
-                    "q": f"{monument["latitud"]},{monument["longitud"]}",
-                    "key": API_KEY
-                }
-                query = f"/geocode/v1/json?{urlencode(query_params)}"
-            
-                with http.client.HTTPSConnection("api.opencagedata.com") as conn:
-                    conn.request("GET", query)
-                    response = conn.getresponse()
-                
-                    if response.status != 200:
-                        raise Exception(f"Error en la respuesta de la API: {response.status} {response.reason}")
-                
-                    data = response.read().decode("utf-8")
-                    parsed_data = json.loads(data)
-                
-                    if 'results' in parsed_data and parsed_data['results']:
-                        components = parsed_data['results'][0].get('components', {})
-                        calle = components.get('road', None)
-                        ciudad = components.get('city', None)
-                        monument["codigo_postal"] = components.get('postcode', None)
-                    
-                        if calle and ciudad:
-                            monument["direccion"] = f"{calle}, {ciudad}"
-                        elif calle:
-                            monument["direccion"] = f"{calle}, CIUDAD DESCONOCIDA"
-                        elif ciudad:
-                            monument["direccion"] = ciudad
-            except Exception as e:
-                print(f"Error al procesar los datos: {e}")
+        monument["direccion"], monument["codigo_postal"] = direccion_codigo_postal(monument["latitud"], monument["longitud"])
     return data
 
 def main(csvFile):
     listCSV = csvToJson(csvFile)
     jsonMapped = mappingsToJson(listCSV)
     jsonCoordenates = obtainCoordenatesFromScrapper(jsonMapped)
-    # jsonCodes = obtainPostalCodeAddress(jsonCoordenates)
+    jsonCodes = obtainPostalCodeAddress(jsonCoordenates)
     with open(destination,'w') as f:
-        # json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
-        json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
+        json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
+        # json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
     return destination
