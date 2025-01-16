@@ -3,15 +3,6 @@ from APIs.busqueda.busqueda_service import *
 api = Flask(__name__)
 
 # Metodo put de ejemplo para que copieis la estructura de como funciona 
-@api.put("/prueba") #URL que "escucha"
-def metodo_post_ejemplo():
-    # Cómo es un método post recibe un JSON
-    data = request.get_json() #recuperamos el JSON
-    # El json es así { "name": "Nombre introducido por el usuario"}
-    name = data.get('name')
-    print(name) #Para que lo muestre por consola
-    return jsonify({"received_name": name}), 200 
-    #Cuando devolvemos la respuesta casi siempre tiene que ser un json, usamos jsonify sobre un mapa de python con formato de JSON (casi son lo mismo)
 """
 Además de devolver el json devolvemos el status code de HTTP
 ------------------------------------------------------------

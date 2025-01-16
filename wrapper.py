@@ -16,6 +16,7 @@ modules = [
     'APIs.wrapperCV.wrapperCV_controller',
     'APIs.wrapperCLE.wrapperCLE_controller',
     'APIs.wrapperEUS.wrapperEUS_controller',
+    'APIs.carga.interfaz_carga',
     'APIs.busqueda.busqueda_controller'
 ]
 
