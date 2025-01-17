@@ -13,6 +13,7 @@ root_path = os.path.abspath(os.path.dirname(__file__))
 # List of scripts to run
 modules = [
     'APIs.carga.carga_controller',
+    'APIs.busqueda.init_busqueda',
     'APIs.wrapperCV.wrapperCV_controller',
     'APIs.wrapperCLE.wrapperCLE_controller',
     'APIs.wrapperEUS.wrapperEUS_controller',
