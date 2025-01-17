@@ -1,22 +1,27 @@
 import sqlite3
 
+"""output
+1. Monumento válido para ser insertado? 
+2. Motivo de la invalidez es la duplicación?
+3. Motivo por el que el monumento ha sido rechazado en caso de serlo
+"""
 def validToInsertMonument(sql_manager, monumento):
     if monumento["nombre"] == None or "":
         print("Monumento descartado por no tener nombre")
-        return False
+        return False, "El nombre del monumento es nulo"
 
     if (monumentoYaInsertado(sql_manager, monumento)):
-        return False
-
-    if  (valoresMonumentoNulos(monumento)):
-        return False
+        return False, True, "El monumento ya había sido insertado en la base de datos"
+    algunAtributoNulo, mensajeError = valoresMonumentoNulos(monumento)
+    if  (algunAtributoNulo):
+        return False, False , mensajeError
 
     if  (codigoPostalInvalido(monumento)):
-        return False
+        return False, "El código postal no es correcto"
     if  (latitudOlongitudInvalidas(monumento)):
-        return False
+        return False, "Las coordenadas no son correctas"
 
-    return True
+    return True, ""
 
 def monumentoYaInsertado(sql_manager, monumento):
     check = sql_manager.execute("SELECT * FROM Monumento WHERE nombre ="+"\'"+monumento["nombre"].replace("'", "")+"\'")
@@ -27,13 +32,19 @@ def monumentoYaInsertado(sql_manager, monumento):
     return False
 
 # Devuelve true si hay algún valor nulo, devuelve false si todos tiene valor
+"""output
+1. Tiene todos los valores válidos?
+2. mensaje que dice lo que ha sucedido 
+"""
 def valoresMonumentoNulos(monumento):
+    mensajeValoresMonumentoNulos = ""
     atributos = ["tipo", "direccion", "codigo_postal", "longitud", "latitud", "descripcion"]
     for atributo in atributos:
         if monumento[atributo] == None or monumento[atributo] == "":
             print(f"El monumento \'{monumento["nombre"]}\' se ha descartado por no tener el atributo \'{atributo}\' definido")
-            return True
-    return False
+            mensajeValoresMonumentoNulos+= f"el campo {atributo} no tiene valor,"
+            return True, mensajeValoresMonumentoNulos
+    return False, ""
     
 def codigoPostalInvalido(monumento):
     # TODO: Comprobar si codigo postal no tiene caracteres no numéricos
@@ -61,18 +72,18 @@ def latitudOlongitudInvalidas(monumento):
     
     return False
 
+"""output
+1. Localidad valida para ser insertada?
+2. Motivo del rechazo es la duplicación?
+3. Razón por la que ha sido rechazado si es el caso
+"""
 def validToInsertLocalidad(sql_manager, localidad):
     if localidad == None:
         print("Localidad descartada por no tener nombre")
-        return False
+        return False, False, "La Localidad es nula"
     if (localidadYaInsertada(sql_manager, localidad)):
-        return False
-    return True
-
-# def unificarEstiloLocalidad(localidad):
-#     localidad_estanderizada = localidad.upper()
-#     if (localidad_estanderizada != localidad):
-#         print(f"El nombre de la localidad {localidad} ha sido estandarizada a {localidad_estanderizada}")
+        return False, True, "La Localidad ya existía en la base de datos"
+    return True, False, "" 
 
 def localidadYaInsertada(sql_manager, localidad):
     check = sql_manager.execute("SELECT * FROM Localidad WHERE nombre ="+"\'"+localidad+"\'")
@@ -82,18 +93,30 @@ def localidadYaInsertada(sql_manager, localidad):
         return True
     return False
 
+"""output
+--------------------
+1. es valida la provincia?
+2. provincia corregida
+3. La razón de que sea invalida es porque está duplicada?
+4. Lista cuyo primer valor es el motivo por el que ha sido tratado el dato (reparado/rechazado)
+   segundo valor es el mensaje que tiene
+"""
 def validToInsertProvincia(sql_manager, provincia):
+    mensajeModificación = ""
     if provincia == None:
         print("Provincia descartada por no tener nombre")
-        return False, provincia
+        return False, provincia, False ["Rechazado", "La provincia es nula"]
     provincia = unificarEstiloProvincia(provincia)
-    provincia = unificaLenguaje(provincia) #Devuelve la provincia estandarizada a los valores esperados (siempre y cuando haga matching con uno de los valores plurilingues esperados)
-    provincia = añadirAcentoAProvincia(provincia)
+    provincia, modificacionUnificaLenguaje = unificaLenguaje(provincia) #Devuelve la provincia estandarizada a los valores esperados (siempre y cuando haga matching con uno de los valores plurilingues esperados)
+    provincia, modificacionAñadirAcentoAProvincia = añadirAcentoAProvincia(provincia)
     if (nombreProvinciaInvalido(provincia)):
-        return False, provincia
+        return False, provincia, False, ["Rechazado", "La provincia no está correctamente escrita"]
     if (provinciaYaInsertada(sql_manager, provincia)):
-        return False, provincia
-    return True, provincia
+        return False, provincia, True, ["Nada", "Nada de nada"]
+    mensajeModificación = modificacionUnificaLenguaje + modificacionAñadirAcentoAProvincia
+    if (mensajeModificación == ""):
+        return True, provincia, False, ["Nada", "Nada de nada"]
+    return True, provincia, False, ["Reparado", mensajeModificación]
 
 def provinciaYaInsertada(sql_manager, provincia):
     check = sql_manager.execute("SELECT * FROM Provincia WHERE nombre=?", (provincia,))
@@ -104,6 +127,10 @@ def provinciaYaInsertada(sql_manager, provincia):
         return True
     return False
 
+"""output
+1. nombre de la provincia 
+2. Se ha modificado o no?
+"""
 def unificarEstiloProvincia(provincia):
     provincia_estandarizada = provincia.upper()
     if (provincia_estandarizada != provincia):
@@ -122,6 +149,7 @@ def añadirAcentoAProvincia(provincia):
     provincia_correcta = provincia_acento.get(provincia, provincia)
     if (provincia_correcta != provincia):
         print(f"El nombre de la provincia {provincia} ha sido corregido a {provincia_correcta}")
+        return provincia_correcta, f"El nombre de la provincia {provincia} ha sido corregido a {provincia_correcta}"
     return provincia_correcta
 
 def unificaLenguaje(provincia):
@@ -137,7 +165,8 @@ def unificaLenguaje(provincia):
     provincia_correcta = provincia_bilingue.get(provincia, provincia)
     if (provincia_correcta != provincia):
         print(f"El nombre de la provincia {provincia} ha sido estandarizado al castellano: {provincia_correcta}")
-    return provincia_correcta
+        return provincia_correcta, f"El nombre de la provincia {provincia} ha sido estandarizado al castellano: {provincia_correcta}"
+    return provincia_correcta, ""
 
 def nombreProvinciaInvalido(provincia):
     provincias = ["ÁVILA", "BURGOS", "LEÓN", "PALENCIA", "SALAMANCA",
