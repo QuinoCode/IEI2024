@@ -2,7 +2,6 @@ import sqlite3
 import os
 from database.data_eligibility import *
 
-
 class Sql_manager:
     def __init__(self):
         self.dbfile = 'EstructuraGlobal.db'
@@ -57,13 +56,6 @@ class Sql_manager:
 
         return results
 
-    """
-    { 
-        "successfully_loaded_registers" : int, 
-        "repaired_registers": [{"fuente_datos": valor, "nombre": valor "localidad": valor, "motivo_de_error": valor, "operacion_realizada": valor} ,..., ] 
-        "rejected_registers": [{"fuente_datos": valor, "nombre": valor, "localidad": valor, "motivo_de_error": valor }, ...]
-    }
-    """
     def insertMonumento(self, item):
         idDB = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Monumento').fetchone()[0]
         idDB = str(int(idDB) + 1) 
@@ -92,6 +84,7 @@ class Sql_manager:
             (idLoc, localidad, en_provincia)
         )
         self.conn.commit()
+        
     def insertProvincia(self, provincia_corregida):
         idProv = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Provincia').fetchone()[0]
         idProv = str(int(idProv) + 1)
@@ -120,15 +113,15 @@ class Sql_manager:
                     if (reasonManagedProvincia[0] == "Reparado"): 
                         repaired_registers.append({
                             "fuente_datos": source,
-                             "nombre": item["Monumento"]["nombre"].replace("'", ""),
-                             "localidad": item["Localidad"],
-                             "motivo_de_error": "Error en el nombre de la provincia",
-                             "operacion_realizada": f"Sustituido {item["Provincia"]} por {provincia_corregida}"
-                             })
+                            "nombre": item["Monumento"]["nombre"].replace("'", ""),
+                            "localidad": item["Localidad"],
+                            "motivo_de_error": "Error en el nombre de la provincia",
+                            "operacion_realizada": f"Sustituido {item['Provincia']} por {provincia_corregida}"
+                        })
                 if (validLocalidad):
                     self.insertLocalidad(item, provincia_corregida)
                 successfully_loaded_registers += 1
-#Fin del caso en el que se inserta
+            # Fin del caso en el que se inserta
 
             if (not validMonumento):
                 rejected_registers.append({
@@ -137,7 +130,7 @@ class Sql_manager:
                     "localidad": item["Localidad"],
                     "motivo_de_error": reasonRejectedMonument
                 })
-            if (not validLocalidad):
+            if (not validLocalidad and not localidadYaInsertada):
                 rejected_registers.append({
                     "fuente_datos": source,
                     "nombre": item["Monumento"]["nombre"].replace("'", ""),
@@ -154,10 +147,10 @@ class Sql_manager:
                     })
 
         response_map = {
-            "sucessfully_loaded_registers": successfully_loaded_registers,
+            "successfully_loaded_registers": successfully_loaded_registers,
             "repaired_registers": repaired_registers,
             "rejected_registers": rejected_registers,
-            }
+        }
         return response_map
 
     # Este método es el método lanzadera de la clase, inserta los datos y devuelve el feedback
@@ -167,7 +160,7 @@ class Sql_manager:
     """
     """Salida
     { 
-    "sucessfully_loaded_registers" : int, 
+    "successfully_loaded_registers" : int, 
     "repaired_registers": [{"fuente_datos": valor, "nombre": valor "localidad": valor, "motivo_de_error": valor, "operacion_realizada": valor} ,..., ] 
     "rejected_registers": [{"fuente_datos": valor, "nombre": valor, "localidad": valor, "motivo_de_error": valor }, ...]
     }
@@ -176,5 +169,3 @@ class Sql_manager:
         self.getSingleton()
         response = self.insertData(jsonArray, source)
         return response
-
-

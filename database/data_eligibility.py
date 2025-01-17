@@ -11,10 +11,10 @@ def validToInsertMonument(sql_manager, monumento):
         return False, "El nombre del monumento es nulo"
 
     if (monumentoYaInsertado(sql_manager, monumento)):
-        return False, True, "El monumento ya había sido insertado en la base de datos"
+        return False, "El monumento ya había sido insertado en la base de datos"
     algunAtributoNulo, mensajeError = valoresMonumentoNulos(monumento)
     if  (algunAtributoNulo):
-        return False, False , mensajeError
+        return False, mensajeError
 
     if  (codigoPostalInvalido(monumento)):
         return False, "El código postal no es correcto"
@@ -27,7 +27,7 @@ def monumentoYaInsertado(sql_manager, monumento):
     check = sql_manager.execute("SELECT * FROM Monumento WHERE nombre ="+"\'"+monumento["nombre"].replace("'", "")+"\'")
     exists = check.fetchone()
     if exists:
-        print(f"Monumento \'{monumento["nombre"]}\' ha sido descartado porque ya existe en la base de datos")
+        print(f"Monumento '{monumento['nombre']}' ha sido descartado porque ya existe en la base de datos")
         return True
     return False
 
@@ -41,7 +41,7 @@ def valoresMonumentoNulos(monumento):
     atributos = ["tipo", "direccion", "codigo_postal", "longitud", "latitud", "descripcion"]
     for atributo in atributos:
         if monumento[atributo] == None or monumento[atributo] == "":
-            print(f"El monumento \'{monumento["nombre"]}\' se ha descartado por no tener el atributo \'{atributo}\' definido")
+            print(f"El monumento '{monumento['nombre']}' se ha descartado por no tener el atributo '{atributo}' definido")
             mensajeValoresMonumentoNulos+= f"el campo {atributo} no tiene valor,"
             return True, mensajeValoresMonumentoNulos
     return False, ""
@@ -51,10 +51,10 @@ def codigoPostalInvalido(monumento):
     try:
         #Comprobar si codigo postal está entre 1000 y 52999
         if 999 < int(monumento["codigo_postal"]) > 53000:
-            print(f"El monumento {monumento["nombre"]} se ha descartado porque su código postal {monumento["codigo_postal"]} está fuera de rango")
+            print(f"El monumento {monumento['nombre']} se ha descartado porque su código postal {monumento['codigo_postal']} está fuera de rango")
             return True
     except ValueError as e:
-        print(f"El monumento {monumento["nombre"]} se ha descartado porque su código postal {monumento["codigo_postal"]} no es un número")
+        print(f"El monumento {monumento['nombre']} se ha descartado porque su código postal {monumento['codigo_postal']} no es un número")
         return True
     return False
     # Devuelve true si es invalido devuelve false si es valido
@@ -63,11 +63,11 @@ def codigoPostalInvalido(monumento):
 # Devuelve true si son invalidas false si son validas
 def latitudOlongitudInvalidas(monumento):
     if -180.0 < float(monumento["longitud"]) >= 180.0:
-        print(f"El monumento {monumento["nombre"]} se ha descartado porque la longitud \'{monumento["longitud"]}\' esta fuera de rango")
+        print(f"El monumento {monumento['nombre']} se ha descartado porque la longitud '{monumento['longitud']}' esta fuera de rango")
         return True
 
     if -90.0 <= float(monumento["latitud"]) >= 90.0:
-        print(f"El monumento {monumento["nombre"]} se ha descartado porque latitud \'{monumento["latitud"]}\' esta fuera de rango")
+        print(f"El monumento {monumento['nombre']} se ha descartado porque latitud '{monumento['latitud']}' esta fuera de rango")
         return True
     
     return False
@@ -82,7 +82,7 @@ def validToInsertLocalidad(sql_manager, localidad):
         print("Localidad descartada por no tener nombre")
         return False, False, "La Localidad es nula"
     if (localidadYaInsertada(sql_manager, localidad)):
-        return False, True, "La Localidad ya existía en la base de datos"
+        return False, True, ""
     return True, False, "" 
 
 def localidadYaInsertada(sql_manager, localidad):
@@ -105,7 +105,7 @@ def validToInsertProvincia(sql_manager, provincia):
     mensajeModificación = ""
     if provincia == None:
         print("Provincia descartada por no tener nombre")
-        return False, provincia, False ["Rechazado", "La provincia es nula"]
+        return False, provincia, False, ["Rechazado", "La provincia es nula"]
     provincia = unificarEstiloProvincia(provincia)
     provincia, modificacionUnificaLenguaje = unificaLenguaje(provincia) #Devuelve la provincia estandarizada a los valores esperados (siempre y cuando haga matching con uno de los valores plurilingues esperados)
     provincia, modificacionAñadirAcentoAProvincia = añadirAcentoAProvincia(provincia)
@@ -123,7 +123,7 @@ def provinciaYaInsertada(sql_manager, provincia):
     exists = check.fetchone()
     exists = exists is not None
     if exists:
-        print(f"Provincia \'{provincia}\' ha sido descartada porque ya existe en la base de datos")
+        print(f"Provincia '{provincia}' ha sido descartada porque ya existe en la base de datos")
         return True
     return False
 
@@ -150,7 +150,7 @@ def añadirAcentoAProvincia(provincia):
     if (provincia_correcta != provincia):
         print(f"El nombre de la provincia {provincia} ha sido corregido a {provincia_correcta}")
         return provincia_correcta, f"El nombre de la provincia {provincia} ha sido corregido a {provincia_correcta}"
-    return provincia_correcta
+    return provincia_correcta,""
 
 def unificaLenguaje(provincia):
     provincia_bilingue = {
@@ -174,6 +174,6 @@ def nombreProvinciaInvalido(provincia):
                   "ÁLAVA", "GUIPÚZCOA", "VIZCAYA",
                   "ALICANTE", "CASTELLÓN", "VALENCIA"]
     if not provincia in provincias:
-        print(f"La provincia \'{provincia}\' no es válida")
+        print(f"La provincia '{provincia}' no es válida")
         return True
     return False
