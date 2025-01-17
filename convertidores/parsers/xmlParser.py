@@ -3,6 +3,7 @@ import html
 import json
 import re
 import requests
+from database.sql_create import * 
 
 result = []
 CLEANR = re.compile('<.*?>')
@@ -97,6 +98,12 @@ def findReplace(desc):
 def main():
     response = retrieveDataFromAPI()
     execute(response)
+
+    file = open('datos/properly_formated.json')
+    data = json.load(file)
+    sql_manager = Sql_manager()
+
+    sql_manager.main(data,response)
 
 if __name__ == '__main__':
     main()
