@@ -1,4 +1,5 @@
 var ui;
+var map;
 
 function cancelarBusqueda() {
     console.log("cancelar")
@@ -10,7 +11,25 @@ function realizarBusqueda() {
     var provincia = document.getElementById('provincia').value;
     var tipo = document.getElementById('tipo').value;
 
-    var url = `http://localhost:5000/buscar?localidad=${localidad}&codigo_postal=${codigo_postal}&provincia=${provincia}&tipo=${tipo}`;
+    var url = `http://localhost:5000/buscar?`;
+
+    if (localidad) {
+        url += `localidad=${encodeURIComponent(localidad)}&`;
+    }
+    if (codigo_postal) {
+        url += `codigo_postal=${encodeURIComponent(codigo_postal)}&`;
+    }
+    if (provincia) {
+        url += `provincia=${encodeURIComponent(provincia.toUpperCase()  )}&`;
+    }
+    if (tipo != "") {
+        url += `tipo=${encodeURIComponent(tipo)}&`;
+    }
+
+    // Remove the trailing '&' if it exists
+    if (url.endsWith('&')) {
+        url = url.slice(0, -1);
+    }
 
     fetch(url)
         .then(response => {
@@ -50,7 +69,7 @@ function update(data) {
         dirCell.textContent = item.direccion;
         
         var locCell = row.insertCell(3);
-        locCell.textContent = item.localidad;
+        locCell.textContent = item.en_localidad;
 
         var postCell = row.insertCell(4);
         postCell.textContent = item.codigo_postal;
@@ -61,33 +80,6 @@ function update(data) {
         var desCell = row.insertCell(6);
         desCell.textContent = item.descripcion;
 
-        var svgMarkup = '<svg width="24" height="24" ' +
-        'xmlns="http://www.w3.org/2000/svg">' +
-        '<rect stroke="white" fill="#1b468d" x="1" y="1" width="22" ' +
-        'height="22" /><text x="12" y="18" font-size="12pt" ' +
-        'font-family="Arial" font-weight="bold" text-anchor="middle" ' +
-        'fill="white">H</text></svg>';
-
-        console.log(item)
-        var icon = new H.map.Icon(svgMarkup),
-            coords = {lat: item.latitud , lng: item.longitud},
-            marker = new H.map.Marker(coords, {icon: icon});
-        map.addObject(marker);
-
-        // Create a speech bubble (InfoBubble) that will appear on hover
-        var bubble = new H.ui.InfoBubble(markerPosition, {
-            content: '<div class="bubble-content">'+item.nombre+'</div>'
-        });
-
-        ui.addBubble(bubble);
-
-        marker.addEventListener('pointerenter', function () {
-            bubble.open();
-        });
-
-        marker.addEventListener('pointerleave', function () {
-            bubble.close();
-        });
     });
 }
 
@@ -119,15 +111,15 @@ function initializeMap() {
     // Get the default map layers from the platform
     var layers = platform.createDefaultLayers();
 
-
-    // Initialize the map with a center point and zoom level
-    var map = new H.Map(
+    map = new H.Map(
         document.getElementById('mapContainer'),
         layers.vector.normal.map, {
             center: { lat: 40.4637, lng: -3.1492 }, // Coordinates of Spain
             zoom: 5.7
         }
     );
+    // Initialize the map with a center point and zoom level
+    
 }
 
 loadHEREApiScript(initializeMap());

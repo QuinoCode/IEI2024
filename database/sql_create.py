@@ -57,18 +57,18 @@ class Sql_manager:
         return self.convert_query_into_properly_structurated_json(results)
 
 # Este método ordena los arrays de hacer una query en sqlite al formato esperado y habitual
-    def convert_query_into_properly_structurated_json(arrayDeArrays):
+    def convert_query_into_properly_structurated_json(self, arrayDeArrays):
         resultArray = []
         for array in arrayDeArrays:
             map = {
-                "nombre": array[0],
-                "tipo": array[1],
-                "direccion":array[2],
-                "codigo_postal": array[3],
-                "longitud": array[4],
+                "nombre": array[1],
+                "tipo": array[2],
+                "direccion":array[3],
+                "codigo_postal": array[4],
+                "longitud": array[6],
                 "latitud": array[5],
-                "descripcion": array[6],
-                "en_localidad": array[7]
+                "descripcion": array[7],
+                "en_localidad": array[8]
             }
             resultArray.append(map)
         return resultArray
