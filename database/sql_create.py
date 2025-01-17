@@ -57,52 +57,89 @@ class Sql_manager:
 
         return results
 
+    """
+    { 
+        "successfully_loaded_registers" : int, 
+        "repaired_registers": [{"fuente_datos": valor, "nombre": valor "localidad": valor, "motivo_de_error": valor, "operacion_realizada": valor} ,..., ] 
+        "rejected_registers": [{"fuente_datos": valor, "nombre": valor, "localidad": valor, "motivo_de_error": valor }, ...]
+    }
+    """
+    def insertMonumento(self, item):
+        idDB = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Monumento').fetchone()[0]
+        idDB = str(int(idDB) + 1) 
+        monNombre =  item["Monumento"]["nombre"].replace("'", "")
+        monTipo =  item["Monumento"]["tipo"]
+        monDireccion =  item["Monumento"]["direccion"].replace("'", "")
+        monCodPost =  item["Monumento"]["codigo_postal"]
+        monLatitud =  item["Monumento"]["latitud"]
+        monLongitud =  item["Monumento"]["longitud"]
+        monDescripcion =  item["Monumento"]["descripcion"].replace("'", "")
+        en_localidad = item["Localidad"].replace("'", "")
+        self.dbcursor.execute(
+            "INSERT INTO Monumento VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (idDB, monNombre, monTipo, monDireccion, monCodPost, monLatitud, monLongitud, monDescripcion, en_localidad)
+        ) 
+        successfully_loaded_registers+=1
+        self.conn.commit()
+
+    def insertLocalidad(self, item, provincia_corregida):
+        idLoc = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Localidad').fetchone()[0]
+        idLoc = str(int(idLoc) + 1)
+        localidad = item["Localidad"].replace("'", "").replace('"', "")
+        en_provincia =  provincia_corregida.replace("'", "").replace('"', "") if provincia_corregida else ""
+        self.dbcursor.execute(
+            'INSERT INTO Localidad VALUES(?, ?, ?)',
+            (idLoc, localidad, en_provincia)
+        )
+        self.conn.commit()
+    def insertProvincia(self, provincia_corregida):
+        idProv = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Provincia').fetchone()[0]
+        idProv = str(int(idProv) + 1)
+        provincia = provincia_corregida.replace("'", "").replace('"', "")
+        self.dbcursor.execute(
+            'INSERT INTO Provincia VALUES(?, ?)',
+            (idProv, provincia)
+        )
+        self.conn.commit()
 
     def insertData(self, arrayJson):
+        successfully_loaded_registers = 0
+        repaired_registers = []
+        rejected_registers = []
+
         for item in arrayJson:
             validProvincia, provincia_corregida = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
-            if validProvincia:
-                idProv = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Provincia').fetchone()[0]
-                idProv = str(int(idProv) + 1)
-                provincia = provincia_corregida.replace("'", "").replace('"', "")
-                self.dbcursor.execute(
-                    'INSERT INTO Provincia VALUES(?, ?)',
-                    (idProv, provincia)
-                )
-                self.conn.commit()
+            validMonumento = validToInsertMonument(self.dbcursor, item["Monumento"])
+            validLocalidad = validToInsertLocalidad(self.dbcursor, item["Localidad"].replace('"', "").replace("'", ""))
+            validProvincia, provincia_corregida = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
 
-            if not item["Provincia"]:
-                break
-            if validToInsertMonument(self.dbcursor, item["Monumento"]):
-                idDB = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Monumento').fetchone()[0]
-                idDB = str(int(idDB) + 1) 
-                monNombre =  item["Monumento"]["nombre"].replace("'", "")
-                monTipo =  item["Monumento"]["tipo"]
-                monDireccion =  item["Monumento"]["direccion"].replace("'", "")
-                monCodPost =  item["Monumento"]["codigo_postal"]
-                monLatitud =  item["Monumento"]["latitud"]
-                monLongitud =  item["Monumento"]["longitud"]
-                monDescripcion =  item["Monumento"]["descripcion"].replace("'", "")
-                en_localidad = item["Localidad"].replace("'", "")
-                self.dbcursor.execute(
-                    "INSERT INTO Monumento VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    (idDB, monNombre, monTipo, monDireccion, monCodPost, monLatitud, monLongitud, monDescripcion, en_localidad)
-                ) 
-                self.conn.commit()
+            if (validProvincia and validLocalidad and validMonumento):
+                self.insertLocalidad(item, provincia_corregida)
+                self.insertProvincia(item, provincia_corregida)
+                self.insertMonumento(item)
 
-            if validToInsertLocalidad(self.dbcursor, item["Localidad"].replace('"', "").replace("'", "")):
-                idLoc = self.dbcursor.execute('SELECT COALESCE(MAX(codigo), 0) FROM Localidad').fetchone()[0]
-                idLoc = str(int(idLoc) + 1)
-                localidad = item["Localidad"].replace("'", "").replace('"', "")
-                en_provincia =  provincia_corregida.replace("'", "").replace('"', "") if provincia_corregida else ""
-                self.dbcursor.execute(
-                    'INSERT INTO Localidad VALUES(?, ?, ?)',
-                    (idLoc, localidad, en_provincia)
-                )
-                self.conn.commit()
+        response_map = {
+            "sucessfully_loaded_registers": successfully_loaded_registers,
+            "repaired_registers": repaired_registers,
+            "rejected_registers": rejected_registers,
+            }
+        return response_map
 
-    def main(self, jsonArray):
+    # Este método es el método lanzadera de la clase, inserta los datos y devuelve el feedback
+    """Parámetros
+     jsonArray => Json con los valores a introducir en la base de datos
+     source => String con la procedencia del json (csv, xml, sql)
+    """
+    """Salida
+    { 
+    "sucessfully_loaded_registers" : int, 
+    "repaired_registers": [{"fuente_datos": valor, "nombre": valor "localidad": valor, "motivo_de_error": valor, "operacion_realizada": valor} ,..., ] 
+    "rejected_registers": [{"fuente_datos": valor, "nombre": valor, "localidad": valor, "motivo_de_error": valor }, ...]
+    }
+    """
+    def main(self, jsonArray, source):
         self.getSingleton()
-        self.insertData(jsonArray)
+        response = self.insertData(jsonArray, source)
+        return response
 
 
