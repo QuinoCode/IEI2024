@@ -6,7 +6,6 @@ from convertidores.parsers.xmlParser import main
 from convertidores.parsers.transformar_geocodificacion import main
 from flask import jsonify, request
 
-# Metodo post de ejemplo para que copieis la estructura de como funciona 
 def cargar_dataset_service():
     diccionario_respuesta = None
     requested_dataset_list = []

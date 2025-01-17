@@ -47,7 +47,7 @@ try:
     data = json.load(file)
     sql_manager = Sql_manager()
 
-    sql_manager.main(data)
+    sql_manager.main(data, "generic")
     
 except Exception as exception:
     print("Algo ha sucedido, probablemente no se ha proporcionado la ruta del archivo a tratar ", exception)

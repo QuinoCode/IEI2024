@@ -79,6 +79,7 @@ class Sql_manager:
             "INSERT INTO Monumento VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (idDB, monNombre, monTipo, monDireccion, monCodPost, monLatitud, monLongitud, monDescripcion, en_localidad)
         ) 
+        
         self.conn.commit()
 
     def insertLocalidad(self, item, provincia_corregida):
@@ -116,6 +117,7 @@ class Sql_manager:
                 self.insertLocalidad(item, provincia_corregida)
                 self.insertProvincia(provincia_corregida)
                 self.insertMonumento(item)
+                successfully_loaded_registers += 1
 
         response_map = {
             "sucessfully_loaded_registers": successfully_loaded_registers,
@@ -136,9 +138,9 @@ class Sql_manager:
     "rejected_registers": [{"fuente_datos": valor, "nombre": valor, "localidad": valor, "motivo_de_error": valor }, ...]
     }
     """
-    def main(self, jsonArray):
+    def main(self, jsonArray, source):
         self.getSingleton()
-        response = self.insertData(jsonArray)
+        response = self.insertData(jsonArray, source)
         return response
 
 
