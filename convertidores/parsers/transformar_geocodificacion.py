@@ -7,7 +7,7 @@ def retrieveDataFromAPI():
     url_destination = "http://localhost:5004/getEUS"
     response = requests.get(url_destination)
 
-    if (response.status_code == 200):
+    if response.status_code == 200:
         return response.json()
     return {"error": "Something went wrong when fetching data from EUS API"}
 
@@ -89,6 +89,8 @@ def transformar_datos_con_geocodificacion(datos_entrada):
 
         datos_transformados.append(nuevo_item)
     return datos_transformados
+
+# Función para guardar datos en un archivo
 def saveDataToFile():
     data = retrieveDataFromAPI()  # Llama a la función para obtener los datos
     file_path = "response_data.json"  # Nombre del archivo a crear
@@ -98,11 +100,18 @@ def saveDataToFile():
     
     return file_path
 
+<<<<<<< HEAD
 
 def main():
     archivo_entrada = saveDataToFile() if len(sys.argv) < 2 else sys.argv[1]
     archivo_salida = "properly_formated.json"
     
+=======
+def main():
+    archivo_entrada = saveDataToFile() if len(sys.argv) < 2 else sys.argv[1]
+    archivo_salida = "properly_formated.json"
+
+>>>>>>> 980ddcb523fb103e35f643107d0b36338d9532a5
     if os.path.exists(archivo_entrada):
         # Preprocesar el archivo para eliminar todas las apariciones vacías de 'address'
         with open(archivo_entrada, "r", encoding="utf-8") as f:
@@ -125,4 +134,5 @@ def main():
     else:
         print(f"Archivo {archivo_entrada} no encontrado.")
 
-
+if __name__ == "__main__":
+    main()
