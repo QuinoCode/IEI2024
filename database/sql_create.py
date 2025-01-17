@@ -108,16 +108,50 @@ class Sql_manager:
         rejected_registers = []
 
         for item in arrayJson:
-            validProvincia, provincia_corregida = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
-            validMonumento = validToInsertMonument(self.dbcursor, item["Monumento"])
-            validLocalidad = validToInsertLocalidad(self.dbcursor, item["Localidad"].replace('"', "").replace("'", ""))
-            validProvincia, provincia_corregida = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
+            validProvincia, provincia_corregida, provinciaYaInsertada, reasonManagedProvincia = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
+            validMonumento, reasonRejectedMonument = validToInsertMonument(self.dbcursor, item["Monumento"])
+            validLocalidad, localidadYaInsertada, reasonRejectedLocalidad = validToInsertLocalidad(self.dbcursor, item["Localidad"].replace('"', "").replace("'", ""))
 
-            if (validProvincia and validLocalidad and validMonumento):
-                self.insertLocalidad(item, provincia_corregida)
-                self.insertProvincia(provincia_corregida)
+            # El monumento se puede insertar y tanto provincia como localidad son correctas 
+            if ((validProvincia or provinciaYaInsertada) and (validLocalidad or localidadYaInsertada) and validMonumento):
                 self.insertMonumento(item)
+                if (validProvincia):
+                    self.insertProvincia(provincia_corregida)
+                    if (reasonManagedProvincia[0] == "Reparado"): 
+                        repaired_registers.append({
+                            "fuente_datos": source,
+                             "nombre": item["Monumento"]["nombre"].replace("'", ""),
+                             "localidad": item["Localidad"],
+                             "motivo_de_error": "Error en el nombre de la provincia",
+                             "operacion_realizada": f"Sustituido {item["Provincia"]} por {provincia_corregida}"
+                             })
+                if (validLocalidad):
+                    self.insertLocalidad(item, provincia_corregida)
                 successfully_loaded_registers += 1
+#Fin del caso en el que se inserta
+
+            if (not validMonumento):
+                rejected_registers.append({
+                    "fuente_datos": source,
+                    "nombre": item["Monumento"]["nombre"].replace("'", ""),
+                    "localidad": item["Localidad"],
+                    "motivo_de_error": reasonRejectedMonument
+                })
+            if (not validLocalidad):
+                rejected_registers.append({
+                    "fuente_datos": source,
+                    "nombre": item["Monumento"]["nombre"].replace("'", ""),
+                    "localidad": item["Localidad"],
+                    "motivo_de_error": reasonRejectedLocalidad
+                })
+            if (not validProvincia):
+                if (reasonManagedProvincia[0] == "Rechazado"):
+                    rejected_registers.append({
+                        "fuente_datos": source,
+                        "nombre": item["Monumento"]["nombre"].replace("'", ""),
+                        "localidad": item["Localidad"],
+                        "motivo_de_error": reasonManagedProvincia[1]
+                    })
 
         response_map = {
             "sucessfully_loaded_registers": successfully_loaded_registers,
