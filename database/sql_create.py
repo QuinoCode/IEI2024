@@ -102,7 +102,7 @@ class Sql_manager:
         )
         self.conn.commit()
 
-    def insertData(self, arrayJson):
+    def insertData(self, arrayJson, source):
         successfully_loaded_registers = 0
         repaired_registers = []
         rejected_registers = []
