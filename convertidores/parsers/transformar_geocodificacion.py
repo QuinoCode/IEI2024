@@ -98,11 +98,10 @@ def saveDataToFile():
     
     return file_path
 
-archivo_entrada = saveDataToFile() if len(sys.argv) < 2 else sys.argv[1]
-archivo_salida = "properly_formated.json"
 
-if __name__ == "__main__":
-    
+def main():
+    archivo_entrada = saveDataToFile() if len(sys.argv) < 2 else sys.argv[1]
+    archivo_salida = "properly_formated.json"
     
     if os.path.exists(archivo_entrada):
         # Preprocesar el archivo para eliminar todas las apariciones vacías de 'address'

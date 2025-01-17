@@ -12,7 +12,7 @@ root_path = os.path.abspath(os.path.dirname(__file__))
 
 # List of scripts to run
 modules = [
-    # 'APIs.carga.carga_controller', Cuando esté el archivo main de transformar geocodificación
+    'APIs.carga.carga_controller',
     'APIs.wrapperCV.wrapperCV_controller',
     'APIs.wrapperCLE.wrapperCLE_controller',
     'APIs.wrapperEUS.wrapperEUS_controller',
