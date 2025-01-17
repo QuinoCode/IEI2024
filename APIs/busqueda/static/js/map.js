@@ -63,6 +63,7 @@ function update(data) {
 
     // Loop through the JSON response and add each row to the table
     data.forEach(item => {
+        console.log(item)
         var row = tableBody.insertRow();
 
         var nameCell = row.insertCell(0);
@@ -81,7 +82,7 @@ function update(data) {
         postCell.textContent = item.codigo_postal;
 
         var provCell = row.insertCell(5);
-        provCell.textContent = item.provincia;
+        provCell.textContent = item.en_provincia;
 
         var desCell = row.insertCell(6);
         desCell.textContent = item.descripcion;
