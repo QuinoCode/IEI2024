@@ -196,5 +196,5 @@ def main():
         # json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
     sql_manager = Sql_manager()
 
-    sql_manager.main(jsonCodes, "bienes_inmuebles_interes_cultural.csv")
-    return destination
+    response_feedback = sql_manager.main(jsonCodes, "bienes_inmuebles_interes_cultural.csv")
+    return response_feedback
