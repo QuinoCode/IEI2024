@@ -1,7 +1,10 @@
 from flask import Flask, jsonify, request
 from APIs.carga.carga_service import cargar_dataset_service
+from flask_cors import CORS
+
 
 api = Flask(__name__)
+CORS(api)
 """
 Además de devolver el json devolvemos el status code de HTTP
 ------------------------------------------------------------
