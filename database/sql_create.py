@@ -160,7 +160,7 @@ class Sql_manager:
                     "localidad": item["Localidad"],
                     "motivo_de_error": reasonRejectedLocalidad
                 })
-            if (not validProvincia):
+            if (not validProvincia and not provinciaYaInsertada):
                 if (reasonManagedProvincia[0] == "Rechazado"):
                     rejected_registers.append({
                         "fuente_datos": source,
