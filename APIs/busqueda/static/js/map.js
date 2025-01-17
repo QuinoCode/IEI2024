@@ -1,8 +1,8 @@
-var ui;
 var map;
+var markers = [];
 
 function cancelarBusqueda() {
-    console.log("cancelar")
+    console.log("cancelar");
 }
 
 function realizarBusqueda() {
@@ -20,7 +20,7 @@ function realizarBusqueda() {
         url += `codigo_postal=${encodeURIComponent(codigo_postal)}&`;
     }
     if (provincia) {
-        url += `provincia=${encodeURIComponent(provincia.toUpperCase()  )}&`;
+        url += `provincia=${encodeURIComponent(provincia.toUpperCase())}&`;
     }
     if (tipo != "") {
         url += `tipo=${encodeURIComponent(tipo)}&`;
@@ -39,6 +39,7 @@ function realizarBusqueda() {
             return response.json();
         })  // Parse the response as JSON
         .then(data => {
+            clearMarkers();
             // Call the update function with the response data
             update(data);
         })
@@ -47,8 +48,13 @@ function realizarBusqueda() {
         });
 }
 
-function update(data) {
+function clearMarkers(){
+    for(var i = 0; i < markers.length; i++){
+        this.map.removeLayer(this.markers[i]);
+    }
+}
 
+function update(data) {
     // Get the table body element where rows will be added
     var tableBody = document.getElementById('tablaResultados').getElementsByTagName('tbody')[0];
 
@@ -67,7 +73,7 @@ function update(data) {
 
         var dirCell = row.insertCell(2);
         dirCell.textContent = item.direccion;
-        
+
         var locCell = row.insertCell(3);
         locCell.textContent = item.en_localidad;
 
@@ -80,46 +86,29 @@ function update(data) {
         var desCell = row.insertCell(6);
         desCell.textContent = item.descripcion;
 
-    });
-}
+        var latitude = parseFloat(item.latitud);
+        var longitude = parseFloat(item.longitud);
 
-function loadHEREApiScript(callback) {
-    var script = document.createElement('script');
-    script.src = 'https://js.api.here.com/v3/3.1/mapsjs-core.js';
-    script.onload = function() {
-        // Load additional script for events and UI
-        var eventsScript = document.createElement('script');
-        eventsScript.src = 'https://js.api.here.com/v3/3.1/mapsjs-mapevents.js';
-        eventsScript.onload = function() {
-            var uiScript = document.createElement('script');
-            uiScript.src = 'https://js.api.here.com/v3/3.1/mapsjs-ui.js';
-            uiScript.onload = callback;
-            document.head.appendChild(uiScript);
-        };
-        document.head.appendChild(eventsScript);
-    };
-    document.head.appendChild(script);
-}
-
-// Ensure the HERE Maps API is loaded and ready
-function initializeMap() {
-    // Initialize the platform object with your HERE API credentials
-    var platform = new H.service.Platform({
-        apikey: 'MR12EWIiTrOwSWtbdzGMH68u35qrgH0-59fLrTzHN9k'  // Replace with your actual API key
-    });
-
-    // Get the default map layers from the platform
-    var layers = platform.createDefaultLayers();
-
-    map = new H.Map(
-        document.getElementById('mapContainer'),
-        layers.vector.normal.map, {
-            center: { lat: 40.4637, lng: -3.1492 }, // Coordinates of Spain
-            zoom: 5.7
-        }
-    );
-    // Initialize the map with a center point and zoom level
+        // Create a marker at the specified latitude and longitude
+        var marker = L.marker([latitude, longitude]).addTo(map);
+        markers.push(marker);
     
+        // Add a popup to the marker that shows the name of the item
+        marker.bindPopup(`<b>${item.nombre}</b>`).openPopup();
+    });
 }
 
-loadHEREApiScript(initializeMap());
+
+// Initialize Leaflet map
+function initializeMap() {
+    // Create a Leaflet map centered in Spain (40.4637, -3.1492)
+    map = L.map('mapContainer').setView([40.4637, -3.1492], 5.8);
+
+    // Add OpenStreetMap tile layer to the map
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+}
+
+// Call the Leaflet map initialization
+initializeMap();
