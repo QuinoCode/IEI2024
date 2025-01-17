@@ -11,128 +11,88 @@ def retrieveDataFromAPI():
         return response.json()
     return {"error": "Something went wrong when fetching data from EUS API"}
 
-# Función para transformar el tipo basado en nombre y descripción
-def transformar_tipo_con_parroquia(document_name, document_description):
-    text = (document_name or "") + " " + (document_description or "")
-    if "Yacimiento arqueológico" in text:
-        return "Yacimiento arqueológico"
-    elif any(x in text for x in ["Iglesia", "Ermita", "Basílica", "Catedral", "Parroquia"]):
-        return "Iglesia-Ermita"
-    elif any(x in text for x in ["Monasterio", "Convento"]):
-        return "Monasterio-Convento"
-    elif any(x in text for x in ["Castillo", "Fortaleza", "Torre", "Palacio"]):
-        return "Castillo-Fortaleza-Torre"
-    elif "Edificio" in text:
-        return "Edificio Singular"
-    elif "Puente" in text:
-        return "Puente"
-    else:
-        return "Otros"
+    
 
-# Función para geocodificar coordenadas usando Nominatim API
-def coordenadas_a_direccion(latitud, longitud):
-    if not latitud or not longitud:
-        return None
-    url = f"https://nominatim.openstreetmap.org/reverse?format=json&lat={latitud}&lon={longitud}"
-    try:
-        response = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("display_name", "Dirección no encontrada")
-    except Exception as e:
-        print(f"Error al obtener dirección para lat: {latitud}, lon: {longitud}: {e}")
-    return "Dirección no encontrada"
+# Función para guardar datos en un archivo
+def saveDataToFile():
+    data = retrieveDataFromAPI()  # Llama a la función para obtener los datos
+    file_path = "response_data.json"  # Nombre del archivo a crear
 
-# Función para validar el código postal
-def validar_codigo_postal(codigo_postal):
-    try:
-        cp_int = int(codigo_postal)
-        if cp_int >= 53000:
-            return None
-        return codigo_postal
-    except (ValueError, TypeError):
-        return None
+    with open(file_path, "w") as file:  # Abre el archivo en modo escritura
+        json.dump(data, file, indent=4)  # Guarda los datos en formato JSON con sangría
 
-# Función para transformar datos con validación
-def transformar_datos_con_geocodificacion(datos_entrada):
-    datos_transformados = []
-    for idx, item in enumerate(datos_entrada, start=1):
+    return file_path
+
+def main():
+    INPUT_FILE = saveDataToFile() if len(sys.argv) < 2 else sys.argv[1]
+    OUTPUT_FILE = "datos/properly_formated.json"
+
+    # Leer el archivo de entrada
+    if not os.path.exists(INPUT_FILE):
+        print(f"[ERROR] Archivo {INPUT_FILE} no encontrado.")
+        sys.exit(1)
+
+    with open(INPUT_FILE, "r", encoding="utf-8") as f:
+        contenido = f.read()
+
+    # Eliminar registros con "address": "" y procesar
+    contenido = contenido.replace('"address" : "",', '')
+    datos = json.loads(contenido)
+
+    # Separar registros válidos, reparados y rechazados
+    validos = []
+    reparados = []
+    rechazados = []
+
+    for idx, item in enumerate(datos, start=1):
+        nombre = item.get("documentName", "Sin nombre")
         latitud = item.get("latwgs84")
         longitud = item.get("lonwgs84")
-        direccion = item.get("address", "")
-        codigo_postal_original = item.get("postalCode")
+        codigo_postal = item.get("postalCode")
 
-        # Validar latitud y longitud
+        # Validación básica
         if not latitud or not longitud:
-            print(f"[WARN] Registro {idx}: Latitud o longitud no válida. Registro omitido.")
+            rechazados.append({
+                "fuenteDatos": "EUS",
+                "nombre": nombre,
+                "Localidad": item.get("municipality", ""),
+                "motivoError": f"Latitud/Longitud no válidas (lat={latitud}, lon={longitud})"
+            })
             continue
 
-        # Validar código postal
-        codigo_postal = validar_codigo_postal(codigo_postal_original)
-        if codigo_postal is None and codigo_postal_original is not None:
-            print(f"[WARN] Registro {idx}: Código postal inválido ('{codigo_postal_original}'). Registro omitido.")
+        if not codigo_postal:
+            rechazados.append({
+                "fuenteDatos": "EUS",
+                "nombre": nombre,
+                "Localidad": item.get("municipality", ""),
+                "motivoError": "Código postal inválido ()"
+            })
             continue
 
-        nuevo_item = {
+        # Agregar a los registros válidos
+        validos.append({
             "Monumento": {
-                "nombre": item.get("documentName", ""),
-                "tipo": transformar_tipo_con_parroquia(item.get("documentName", ""), item.get("documentDescription", "")),
-                "direccion": direccion,
-                "codigo_postal": codigo_postal if codigo_postal is not None else "",
+                "nombre": nombre,
+                "direccion": item.get("address", ""),
+                "codigo_postal": codigo_postal,
                 "longitud": longitud,
                 "latitud": latitud,
                 "descripcion": item.get("documentDescription", "")
             },
             "Localidad": item.get("municipality", ""),
             "Provincia": item.get("territory", "")
-        }
+        })
 
-        datos_transformados.append(nuevo_item)
-    return datos_transformados
+    # Guardar registros válidos en el archivo de salida
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        json.dump(validos, f, ensure_ascii=False, indent=4)
 
-# Función para guardar datos en un archivo
-def saveDataToFile():
-    data = retrieveDataFromAPI()  # Llama a la función para obtener los datos
-    file_path = "response_data.json"  # Nombre del archivo a crear
-    
-    with open(file_path, "w") as file:  # Abre el archivo en modo escritura
-        json.dump(data, file, indent=4)  # Guarda los datos en formato JSON con sangría
-    
-    return file_path
-
-<<<<<<< HEAD
-
-def main():
-    archivo_entrada = saveDataToFile() if len(sys.argv) < 2 else sys.argv[1]
-    archivo_salida = "properly_formated.json"
-    
-=======
-def main():
-    archivo_entrada = saveDataToFile() if len(sys.argv) < 2 else sys.argv[1]
-    archivo_salida = "properly_formated.json"
-
->>>>>>> 980ddcb523fb103e35f643107d0b36338d9532a5
-    if os.path.exists(archivo_entrada):
-        # Preprocesar el archivo para eliminar todas las apariciones vacías de 'address'
-        with open(archivo_entrada, "r", encoding="utf-8") as f:
-            contenido = f.read()
-        
-        # Eliminar todas las apariciones de "address" : "",
-        contenido = contenido.replace('"address" : "",', '')
-
-        # Convertir el contenido modificado a JSON
-        datos_originales = json.loads(contenido)
-
-        # Transformar los datos
-        datos_transformados = transformar_datos_con_geocodificacion(datos_originales)
-
-        # Guardar los datos transformados en la misma carpeta que el script
-        with open(archivo_salida, "w", encoding="utf-8") as archivo_salida_json:
-            json.dump(datos_transformados, archivo_salida_json, ensure_ascii=False, indent=4)
-
-        print(f"Transformación completada. Archivo generado: {archivo_salida}")
-    else:
-        print(f"Archivo {archivo_entrada} no encontrado.")
+    # Imprimir resultados
+    print(json.dumps({
+        "sucessfully_loaded_registers": len(validos),
+        "repaired_registers": reparados,
+        "rejected_registers": rechazados
+    }, ensure_ascii=False, indent=4))
 
 if __name__ == "__main__":
     main()
