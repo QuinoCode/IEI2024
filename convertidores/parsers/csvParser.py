@@ -11,12 +11,12 @@ from urllib.parse import urlencode
 
 destination = 'datos/properly_formated.json'
 def retrieveDataFromAPI():
-    url_destination = "http://localhost:5002"
+    url_destination = "http://localhost:5002/getCV"
     response = requests.get(url_destination)
 
     if (response.status_code == 200):
         return response.json()
-    return {"error": "Something went wrong when fetching data from CV API"}
+    return {"error": response}
 
 # Obtener la clasificación a traves de codClasificacion
 def convertCodClasificacion(codClasificacion):
