@@ -6,7 +6,7 @@ function cancelarBusqueda() {
 
 function realizarBusqueda() {
     var localidad = document.getElementById('localidad').value;
-    var codigo_postal = document.getElementById('codigo_postal').value;
+    var codigo_postal = document.getElementById('codigoPostal').value;
     var provincia = document.getElementById('provincia').value;
     var tipo = document.getElementById('tipo').value;
 
@@ -31,7 +31,7 @@ function realizarBusqueda() {
 function update(data) {
 
     // Get the table body element where rows will be added
-    var tableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+    var tableBody = document.getElementById('tablaResultados').getElementsByTagName('tbody')[0];
 
     // Clear any existing rows in the table
     tableBody.innerHTML = '';
@@ -61,8 +61,17 @@ function update(data) {
         var desCell = row.insertCell(6);
         desCell.textContent = item.descripcion;
 
-        var markerPosition = { lat: item.latitud , lng: item.longitud };
-        var marker = new H.map.Marker(markerPosition);
+        var svgMarkup = '<svg width="24" height="24" ' +
+        'xmlns="http://www.w3.org/2000/svg">' +
+        '<rect stroke="white" fill="#1b468d" x="1" y="1" width="22" ' +
+        'height="22" /><text x="12" y="18" font-size="12pt" ' +
+        'font-family="Arial" font-weight="bold" text-anchor="middle" ' +
+        'fill="white">H</text></svg>';
+
+        console.log(item)
+        var icon = new H.map.Icon(svgMarkup),
+            coords = {lat: item.latitud , lng: item.longitud},
+            marker = new H.map.Marker(coords, {icon: icon});
         map.addObject(marker);
 
         // Create a speech bubble (InfoBubble) that will appear on hover
