@@ -1,12 +1,20 @@
-import webbrowser
-import os
 
-# Define the path to the HTML file
-html_file_path = 'APIs/busqueda/busqueda.html'
 
-# Make sure the file exists
-if os.path.isfile(html_file_path):
-    # Open the HTML file in the default web browser
-    webbrowser.open('file://' + os.path.realpath(html_file_path))
-else:
-    print(f"Error: The file '{html_file_path}' does not exist.")
+from flask import Flask, render_template, request, jsonify
+
+
+
+api = Flask(__name__)
+
+# 1) GET /carga -> Muestra la interfaz HTML
+@api.get("/")
+def mostrar_interfaz_html():
+    """
+    Muestra el formulario (templates/carga.html) para seleccionar
+    qué fuentes cargar (CV, CLE, EUS...) y un botón "Cargar".
+    """
+    print("holi")
+    return render_template("busqueda.html")
+if __name__ == '__main__':
+    # Levantamos la app en el puerto 5007
+    api.run(debug=True, port=5008)
