@@ -83,7 +83,7 @@ def execute(response):
             }
             result.append(item)
         #al terminar el bucle, se guarda la lista generada como json
-        json.dump(result, f, ensure_ascii=False, indent=4)
+        json.dump(result, f, ensure_ascii=True, indent=4)
 
 #Función para limpiar el código de elementos XML. Usa un CLEANR para los tags, y replaces para cdata y saltos de línea
 def findReplace(desc):

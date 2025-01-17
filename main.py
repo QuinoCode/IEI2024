@@ -44,7 +44,7 @@ try:
     location_of_parsed_data = "./datos/properly_formated.json"
 
     file = open(location_of_parsed_data)
-    data = json.load(file, encoding="utf-8")
+    data = json.load(file)
     sql_manager = Sql_manager()
 
     sql_manager.main(data)
