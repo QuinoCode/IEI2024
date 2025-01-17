@@ -206,8 +206,8 @@
     };
 
     // Petición POST al endpoint /carga de tu backend
-    fetch('localhost:5001/carga', {
-      method: 'PUT',
+    fetch('http://localhost:5001/carga', {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bodyData)
     })

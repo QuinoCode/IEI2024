@@ -24,7 +24,7 @@ class Sql_manager:
 
     def query_monumento(self, localidad, codigo_postal, provincia, tipo):
         self.dbcursor.execute("PRAGMA foreign_keys = ON;")
-        query = """SELECT m.* FROM Monumento m JOIN Localidad l ON m.en_localidad = l.nombre"""
+        query = """SELECT m.*, l.en_provincia FROM Monumento m JOIN Localidad l ON m.en_localidad = l.nombre"""
         conditions = []
         values = []
 
@@ -68,7 +68,8 @@ class Sql_manager:
                 "longitud": array[6],
                 "latitud": array[5],
                 "descripcion": array[7],
-                "en_localidad": array[8]
+                "en_localidad": array[8],
+                "en_provincia": array[9],
             }
             resultArray.append(map)
         return resultArray
