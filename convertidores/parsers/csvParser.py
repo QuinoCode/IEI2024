@@ -5,42 +5,18 @@ import time
 from convertidores.Scrapper.scrapper import Scrapper
 from convertidores.parsers.direccion_codigo_postal import *
 
-import http.client
+from database.sql_create import * 
 from urllib.parse import quote
 from urllib.parse import urlencode
 
 destination = 'datos/properly_formated.json'
 def retrieveDataFromAPI():
-    url_destination = "http://localhost:5002"
+    url_destination = "http://localhost:5002/getCV"
     response = requests.get(url_destination)
 
     if (response.status_code == 200):
         return response.json()
-    return {"error": "Something went wrong when fetching data from CV API"}
-
-# Convertir el CSV a JSON
-def csvToJson(csvFile):
-    listCSV = []   
-    with open(csvFile, encoding='utf-8') as csvf:
-        csvRead = csv.reader(csvf)
-        next(csvRead)
-        for row in  csvRead:
-            # IGCPV denominación provincia municipio UTMeste UTMnorte codclasificacion clasificacion codcategoria categoria
-            campos = row[0].split(';')
-            item = {
-                "IGCPV": campos[0],
-                "denominacion": campos[1],
-                "provincia": campos[2],
-                "municipio": campos[3],
-                "UTMeste": campos[4],
-                "UTMnorte": campos[5],
-                "codclasificacion": campos[6],
-                "clasificacion": campos[7],
-                "codcategoria": campos[8],
-                "categoria": campos[9]
-            }
-            listCSV.append(item)
-    return listCSV
+    return {"error": response}
 
 # Obtener la clasificación a traves de codClasificacion
 def convertCodClasificacion(codClasificacion):
@@ -210,12 +186,15 @@ def obtainPostalCodeAddress(data):
         monument["direccion"], monument["codigo_postal"] = direccion_codigo_postal(monument["latitud"], monument["longitud"])
     return data
 
-def main(csvFile):
-    listCSV = csvToJson(csvFile)
+def main():
+    listCSV = retrieveDataFromAPI()
     jsonMapped = mappingsToJson(listCSV)
     jsonCoordenates = obtainCoordenatesFromScrapper(jsonMapped)
     jsonCodes = obtainPostalCodeAddress(jsonCoordenates)
     with open(destination,'w', encoding='utf-8') as f:
         json.dump(jsonCodes, f, ensure_ascii=False, indent=4)
         # json.dump(jsonCoordenates, f, ensure_ascii=False, indent=4)
+    sql_manager = Sql_manager()
+
+    sql_manager.main(jsonCodes, "bienes_inmuebles_interes_cultural.csv")
     return destination

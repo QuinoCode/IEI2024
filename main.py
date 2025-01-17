@@ -29,7 +29,7 @@ def convertir_datos_a_json(tipo):
         convertir_json_a_json(file)
 
 def convertir_csv_a_json(file):
-    csvParser.main(file)
+    csvParser.main()
 
 def convertir_xml_a_json(file):
     xmlParser.main()
