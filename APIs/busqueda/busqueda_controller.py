@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from APIs.busqueda.busqueda_service import *
 api = Flask(__name__)
-
+CORS(api)
 # Metodo put de ejemplo para que copieis la estructura de como funciona 
 """
 Además de devolver el json devolvemos el status code de HTTP
