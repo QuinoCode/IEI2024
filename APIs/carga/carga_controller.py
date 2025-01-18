@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import json
 from flask_cors import CORS
 from APIs.carga.carga_service import cargar_dataset_service
 from flask_cors import CORS
@@ -17,12 +18,13 @@ Además de devolver el json devolvemos el status code de HTTP
 404 Not Found - El recurso solicitado no existe.
 500 Internal Server Error - El procesado interno de los datos ha fallado (una excepción o algo rompe el programa)
 """
-@api.post("/carga")
+@api.put("/carga")
 def cargar_dataset():
     diccionario_respuesta = None
-    diccionario_respuesta = cargar_dataset_service() #importado base de datos
+    diccionario_respuesta = cargar_dataset_service(request.get_json()) #importado base de datos
     if not  diccionario_respuesta:
         return jsonify({"error": "No hubo respuesta de la base de datos"}), 404
+
     return jsonify(diccionario_respuesta), 200
 
 # It's a post method since it has to wrapp the data inputted by the user in a json and get methods don't allow for a body

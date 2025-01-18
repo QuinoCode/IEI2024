@@ -102,8 +102,9 @@ def main():
     file = open('datos/properly_formated.json')
     data = json.load(file)
     sql_manager = Sql_manager()
+    feedback_results = sql_manager.main(data, "monumentos.xml")
+    return feedback_results
 
-    sql_manager.main(data, "monumentos.xml")
 
 if __name__ == '__main__':
     main()

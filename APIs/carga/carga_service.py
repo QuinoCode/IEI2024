@@ -4,20 +4,19 @@ from convertidores.parsers import transformar_geocodificacion
 from convertidores.parsers.csvParser import main
 from convertidores.parsers.xmlParser import main
 from convertidores.parsers.transformar_geocodificacion import main
-from flask import jsonify, request
+from flask import request
 
-def cargar_dataset_service():
+def cargar_dataset_service(data):
     diccionario_respuesta = None
     requested_dataset_list = []
-    data = request.get_json()
-
     todas_requested = data.get('todas')
+
     if (todas_requested): 
         cv_return = retrieve_CV()
         cle_return = retrieve_CLE()
         eus_return = retrieve_EUS()
         diccionario_respuesta = squash_json_feedback_results_into_single_json([cv_return, cle_return, eus_return])
-        return jsonify(diccionario_respuesta)
+        return diccionario_respuesta
 
     cv_requested = data.get('cv')
     if (cv_requested):
@@ -37,8 +36,8 @@ def cargar_dataset_service():
     diccionario_respuesta = squash_json_feedback_results_into_single_json(requested_dataset_list)
 
     if not  diccionario_respuesta:
-        return jsonify({"error": "No hubo respuesta de la base de datos"}), 404
-    return jsonify(diccionario_respuesta), 200
+        return {"error": "No hubo respuesta de la base de datos"}
+    return diccionario_respuesta
 
 def squash_json_feedback_results_into_single_json(list_of_jsons):
     sum_of_successfully_loaded_registers = 0
@@ -46,7 +45,7 @@ def squash_json_feedback_results_into_single_json(list_of_jsons):
     list_of_rejected_registers = []
 
     for json in list_of_jsons:
-        sum_of_successfully_loaded_registers += json['sucessfully_loaded_registers']
+        sum_of_successfully_loaded_registers += json['successfully_loaded_registers']
         list_of_repaired_registers.append(json['repaired_registers'])
         list_of_rejected_registers.append(json['rejected_registers'])
 
