@@ -8,6 +8,28 @@ class Sql_manager:
         self.dbcursor = None
         self.conn = None
 
+    @staticmethod
+    def borrar_estructura_global():
+        """
+        Borra el archivo 'EstructuraGlobal.db' ubicado en la carpeta principal 'IEI2024'.
+        """
+        # Obtener la ruta absoluta de la carpeta principal
+        carpeta_principal = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+        # Construir la ruta completa del archivo a borrar
+        archivo_a_borrar = os.path.join(carpeta_principal, 'EstructuraGlobal.db')
+
+        try:
+            if os.path.exists(archivo_a_borrar):
+                os.remove(archivo_a_borrar)
+                print(f"Archivo '{archivo_a_borrar}' eliminado exitosamente.")
+                return True
+            else:
+                print(f"El archivo '{archivo_a_borrar}' no existe.")
+                return False
+        except Exception as e:
+            print(f"Ocurrió un error al intentar borrar el archivo: {e}")
+            return False
+
     def getSingleton(self):
         if not os.path.exists(self.dbfile):
             self.conn = sqlite3.connect(self.dbfile)

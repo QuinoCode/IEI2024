@@ -305,7 +305,23 @@
   // Botón "Borrar almacén de datos"
   function borrarAlmacen() {
     // Aquí podrías invocar /borrar en tu backend si existiera
-    alert("Se ha solicitado el borrado del almacén de datos (no implementado).");
+    //alert("Se ha solicitado el borrado del almacén de datos (no implementado).");
+    fetch('http://127.0.0.1:5001/borrar', {
+      method: 'POST',
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Error HTTP! Estado: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      alert("El almacén de datos se ha borrado exitosamente.");
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Error al intentar borrar el almacén de datos.");
+    });
   }
 </script>
 </body>

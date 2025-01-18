@@ -3,6 +3,8 @@ import json
 from flask_cors import CORS
 from APIs.carga.carga_service import cargar_dataset_service
 from flask_cors import CORS
+from carga import carga_service
+
 
 
 api = Flask(__name__)
@@ -28,6 +30,13 @@ def cargar_dataset():
     print(f"Puerto carga rechazados: \n {diccionario_respuesta["rejected_registers"]}\n")
 
     return jsonify(diccionario_respuesta), 200
+
+@api.post("/borrar")
+def borrar_estructura_global():
+    if carga_service.borrar_estructura_global():
+        return jsonify({"message": "Almacén de datos borrado exitosamente"}), 200
+    else:
+        return jsonify({"message": "Almacén de datos NO SE HA borrado"}), 500
 
 # It's a post method since it has to wrapp the data inputted by the user in a json and get methods don't allow for a body
 if __name__ == '__main__':
