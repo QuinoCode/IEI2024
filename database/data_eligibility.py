@@ -42,7 +42,7 @@ def valoresMonumentoNulos(monumento):
     for atributo in atributos:
         if monumento[atributo] == None or monumento[atributo] == "":
             print(f"El monumento '{monumento['nombre']}' se ha descartado por no tener el atributo '{atributo}' definido")
-            mensajeValoresMonumentoNulos+= f"el campo {atributo} no tiene valor,"
+            mensajeValoresMonumentoNulos+= f"El campo {atributo} no tiene valor,"
             return True, mensajeValoresMonumentoNulos
     return False, ""
     
@@ -101,7 +101,7 @@ def localidadYaInsertada(sql_manager, localidad):
 4. Lista cuyo primer valor es el motivo por el que ha sido tratado el dato (reparado/rechazado)
    segundo valor es el mensaje que tiene
 """
-def validToInsertProvincia(sql_manager, provincia):
+def validToInsertProvincia(sql_manager, provincia, source):
     mensajeModificación = ""
     if provincia == None:
         print("Provincia descartada por no tener nombre")
@@ -109,7 +109,7 @@ def validToInsertProvincia(sql_manager, provincia):
     provincia = unificarEstiloProvincia(provincia)
     provincia, modificacionUnificaLenguaje = unificaLenguaje(provincia) #Devuelve la provincia estandarizada a los valores esperados (siempre y cuando haga matching con uno de los valores plurilingues esperados)
     provincia, modificacionAñadirAcentoAProvincia = añadirAcentoAProvincia(provincia)
-    if (nombreProvinciaInvalido(provincia)):
+    if (nombreProvinciaInvalido(provincia, source)):
         return False, provincia, False, ["Rechazado", "La provincia no está correctamente escrita"]
     if (provinciaYaInsertada(sql_manager, provincia)):
         return False, provincia, True, ["Nada", "Nada de nada"]
@@ -168,12 +168,21 @@ def unificaLenguaje(provincia):
         return provincia_correcta, f"El nombre de la provincia {provincia} ha sido estandarizado al castellano: {provincia_correcta}"
     return provincia_correcta, ""
 
-def nombreProvinciaInvalido(provincia):
-    provincias = ["ÁVILA", "BURGOS", "LEÓN", "PALENCIA", "SALAMANCA",
-                  "SEGOVIA", "SORIA", "VALLADOLID", "ZAMORA",
-                  "ÁLAVA", "GUIPÚZCOA", "VIZCAYA",
-                  "ALICANTE", "CASTELLÓN", "VALENCIA"]
-    if not provincia in provincias:
-        print(f"La provincia '{provincia}' no es válida")
-        return True
-    return False
+def nombreProvinciaInvalido(provincia, source):
+    provincias_CV = ["ALICANTE", "CASTELLÓN", "VALENCIA"]
+    provincias_CLE = ["ÁVILA", "BURGOS", "SEGOVIA", "LEÓN", "PALENCIA", "SALAMANCA","SORIA", "VALLADOLID", "ZAMORA",]
+    provincias_EUS = ["ÁLAVA", "GUIPÚZCOA", "VIZCAYA"]
+
+    match source:
+        case "bienes_inmuebles_interes_cultural.csv":
+            if provincia in provincias_CV:
+                return False
+        case "monumentos.xml":
+            if provincia in provincias_CLE:
+                return False
+        case "edificios.json":
+            if provincia in provincias_EUS:
+                return False
+        case _:
+            return True
+    return True

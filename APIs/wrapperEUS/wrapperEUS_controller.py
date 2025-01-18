@@ -1,11 +1,11 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 import json
 import os
 from flask_cors import CORS
+
 api = Flask(__name__)
 CORS(api)
-INPUT_FILE = "edificios.json"
-OUTPUT_FILE = "datos/properly_formated.json"
+INPUT_FILE = "datos/entrega2/edificios.json"
 
 @api.route("/getEUS", methods=['GET'])
 def get_eus():
@@ -15,9 +15,10 @@ def get_eus():
             return jsonify({"error": f"Archivo {INPUT_FILE} no encontrado."}), 404
 
         with open(INPUT_FILE, "r", encoding="utf-8") as f:
-            contenido = json.load(f)
-        
-        return jsonify(contenido), 200
+            # contenido = json.load(f)
+            contenido = f.read()
+        return Response(contenido, content_type="application/json"), 200
+
     except Exception as e:
         return jsonify({"error": f"Error al procesar el archivo: {str(e)}"}), 500
 

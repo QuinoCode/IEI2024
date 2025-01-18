@@ -103,7 +103,7 @@ def main():
     data = json.load(file)
     sql_manager = Sql_manager()
 
-    sql_manager.main(data,response)
+    sql_manager.main(data, "monumentos.xml")
 
 if __name__ == '__main__':
     main()

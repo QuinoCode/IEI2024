@@ -125,7 +125,7 @@ class Sql_manager:
         rejected_registers = []
 
         for item in arrayJson:
-            validProvincia, provincia_corregida, provinciaYaInsertada, reasonManagedProvincia = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""))
+            validProvincia, provincia_corregida, provinciaYaInsertada, reasonManagedProvincia = validToInsertProvincia(self.dbcursor, item["Provincia"].replace('"', "").replace("'", ""), source)
             validMonumento, reasonRejectedMonument = validToInsertMonument(self.dbcursor, item["Monumento"])
             validLocalidad, localidadYaInsertada, reasonRejectedLocalidad = validToInsertLocalidad(self.dbcursor, item["Localidad"].replace('"', "").replace("'", ""))
 
