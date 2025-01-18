@@ -175,6 +175,7 @@ class Sql_manager:
             "repaired_registers": repaired_registers,
             "rejected_registers": rejected_registers,
         }
+        print(f"Sql_create: {response_map["repaired_registers"]}")
         return response_map
 
     # Este método es el método lanzadera de la clase, inserta los datos y devuelve el feedback

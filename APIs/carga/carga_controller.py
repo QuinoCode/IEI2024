@@ -24,6 +24,7 @@ def cargar_dataset():
     diccionario_respuesta = cargar_dataset_service(request.get_json()) #importado base de datos
     if not  diccionario_respuesta:
         return jsonify({"error": "No hubo respuesta de la base de datos"}), 404
+    print(f"Puerto carga: {diccionario_respuesta["repaired_registers"]}")
 
     return jsonify(diccionario_respuesta), 200
 

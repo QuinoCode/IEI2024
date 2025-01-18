@@ -50,8 +50,8 @@ def squash_json_feedback_results_into_single_json(list_of_jsons):
         list_of_rejected_registers.append(json['rejected_registers'])
 
     return {
-        "sucessfully_loaded_registers": sum_of_successfully_loaded_registers,
-        "repaired_registers": list_of_rejected_registers,
+        "successfully_loaded_registers": sum_of_successfully_loaded_registers,
+        "repaired_registers": list_of_repaired_registers,
         "rejected_registers": list_of_rejected_registers
     }
 

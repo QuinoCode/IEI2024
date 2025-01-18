@@ -214,6 +214,7 @@
     .then(response => response.json())
     .then(data => {
       // Si en el JSON viene error, lo mostramos
+      console.log(data)
       if (data.error) {
         document.getElementById('resultados').innerHTML = `
           <div class="resultado-titulo">Resultados de la carga:</div>
@@ -238,7 +239,7 @@
     //   sucessfully_loaded_registers
     //   repaired_registers
     //   rejected_registers
-    const numCargados = data.sucessfully_loaded_registers || 0;
+    const numCargados = data.successfully_loaded_registers || 0;
     const reparados   = data.repaired_registers || [];
     const rechazados  = data.rejected_registers || [];
 
@@ -263,13 +264,13 @@
                   </tr>
                 </thead>
                 <tbody>`;
-      reparados.forEach(reg => {
+      reparados[0].forEach(reg => {
         html += `<tr>
-                   <td>${reg.fuenteDatos || ''}</td>
+                   <td>${reg.fuente_datos || ''}</td>
                    <td>${reg.nombre || ''}</td>
                    <td>${reg.localidad || ''}</td>
-                   <td>${reg.motivoError || ''}</td>
-                   <td>${reg.operacionRealizada || ''}</td>
+                   <td>${reg.motivo_de_error || ''}</td>
+                   <td>${reg.operacion_realizada || ''}</td>
                  </tr>`;
       });
       html += `</tbody></table>`;
@@ -292,12 +293,12 @@
                   </tr>
                 </thead>
                 <tbody>`;
-      rechazados.forEach(reg => {
+      rechazados[0].forEach(reg => {
         html += `<tr>
-                   <td>${reg.fuenteDatos || ''}</td>
+                   <td>${reg.fuente_datos || ''}</td>
                    <td>${reg.nombre || ''}</td>
-                   <td>${reg.Localidad || ''}</td>
-                   <td>${reg.motivoError || ''}</td>
+                   <td>${reg.localidad || ''}</td>
+                   <td>${reg.motivo_de_error || ''}</td>
                  </tr>`;
       });
       html += `</tbody></table>`;
