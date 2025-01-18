@@ -175,7 +175,8 @@ class Sql_manager:
             "repaired_registers": repaired_registers,
             "rejected_registers": rejected_registers,
         }
-        print(f"Sql_create: {response_map["repaired_registers"]}")
+        print(f"Sql_create repaired: \n {response_map["repaired_registers"]} \n")
+        print(f"Sql_create rejected: \n {response_map["rejected_registers"]} \n")
         return response_map
 
     # Este método es el método lanzadera de la clase, inserta los datos y devuelve el feedback

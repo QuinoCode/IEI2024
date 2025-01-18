@@ -3,7 +3,7 @@ import requests
 import json
 import time
 from convertidores.Scrapper.scrapper import Scrapper
-from convertidores.parsers.direccion_codigo_postal import *
+# from convertidores.parsers.direccion_codigo_postal import *
 
 from database.sql_create import * 
 from urllib.parse import quote
