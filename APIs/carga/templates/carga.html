@@ -191,37 +191,30 @@
   }
 
   function cargarDatos() {
-    // Obtenemos el valor de cada checkbox
-    const todas = document.getElementById('todas').checked;
-    const cle   = document.getElementById('cle').checked;
-    const cv    = document.getElementById('cv').checked;
-    const eus   = document.getElementById('eus').checked;
+  const checkboxes = {
+    todas: document.getElementById('todas')?.checked || false,
+    cle: document.getElementById('cle')?.checked || false,
+    cv: document.getElementById('cv')?.checked || false,
+    eus: document.getElementById('eus')?.checked || false
+  };
 
-    // Body del POST como JSON
-    const bodyData = {
-      todas: todas,
-      cle: cle,
-      cv: cv,
-      eus: eus
-    };
-
-    // Petición POST al endpoint /carga de tu backend
-    fetch('http://localhost:5001/carga', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyData)
+  fetch('http://127.0.0.1:5001/carga', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(checkboxes)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
     })
-    .then(response => response.json())
     .then(data => {
       // Si en el JSON viene error, lo mostramos
       console.log(data)
       if (data.error) {
-        document.getElementById('resultados').innerHTML = `
-          <div class="resultado-titulo">Resultados de la carga:</div>
-          <p style="color:red;">Error: ${data.error}</p>
-        `;
+        mostrarError(data.error);
       } else {
-        // Mostramos los datos retornados por el endpoint
         mostrarResultados(data);
       }
     })
@@ -306,8 +299,8 @@
       html += `<p class="sin-registros">Ninguno</p>`;
     }
 
-    document.getElementById('resultados').innerHTML = html;
-  }
+  document.getElementById('resultados').innerHTML = html;
+}
 
   // Botón "Borrar almacén de datos"
   function borrarAlmacen() {
@@ -317,3 +310,5 @@
 </script>
 </body>
 </html>
+
+
