@@ -17,9 +17,25 @@ def retrieveDataFromAPI():
         print(f"[ERROR] No se pudo conectar al API: {e}")
         return []
 
-def mappingTipo (json):
-    #TODO: Conseguir el tipo con los mappings que se hicieran en su momento para obtenerlo
-    return "Otros"
+def mappingTipo(item):
+    """
+    Mapea el tipo de monumento basado en las reglas definidas previamente.
+    """
+    text = (item.get("documentName", "") + " " + item.get("documentDescription", "")).lower()
+    if "yacimiento arqueológico" in text:
+        return "Yacimiento arqueológico"
+    elif any(keyword in text for keyword in ["iglesia", "ermita", "basílica", "catedral", "parroquia"]):
+        return "Iglesia-Ermita"
+    elif any(keyword in text for keyword in ["monasterio", "convento"]):
+        return "Monasterio-Convento"
+    elif any(keyword in text for keyword in ["castillo", "fortaleza", "torre", "palacio"]):
+        return "Castillo-Fortaleza-Torre"
+    elif "edificio" in text:
+        return "Edificio Singular"
+    elif "puente" in text:
+        return "Puente"
+    else:
+        return "Otros"
 
 def main():
     """
