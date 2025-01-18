@@ -191,122 +191,107 @@
   }
 
   function cargarDatos() {
-    // Obtenemos el valor de cada checkbox
-    const todas = document.getElementById('todas').checked;
-    const cle   = document.getElementById('cle').checked;
-    const cv    = document.getElementById('cv').checked;
-    const eus   = document.getElementById('eus').checked;
+  const checkboxes = {
+    todas: document.getElementById('todas')?.checked || false,
+    cle: document.getElementById('cle')?.checked || false,
+    cv: document.getElementById('cv')?.checked || false,
+    eus: document.getElementById('eus')?.checked || false
+  };
 
-    // Body del POST como JSON
-    const bodyData = {
-      todas: todas,
-      cle: cle,
-      cv: cv,
-      eus: eus
-    };
-
-    // Petición POST al endpoint /carga de tu backend
-    fetch('http://localhost:5001/carga', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyData)
+  fetch('http://127.0.0.1:5001/carga', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(checkboxes)
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
     })
-    .then(response => response.json())
     .then(data => {
-      // Si en el JSON viene error, lo mostramos
       if (data.error) {
-        document.getElementById('resultados').innerHTML = `
-          <div class="resultado-titulo">Resultados de la carga:</div>
-          <p style="color:red;">Error: ${data.error}</p>
-        `;
+        mostrarError(data.error);
       } else {
-        // Mostramos los datos retornados por el endpoint
         mostrarResultados(data);
       }
     })
     .catch(err => {
-      console.error(err);
-      document.getElementById('resultados').innerHTML = `
-        <div class="resultado-titulo">Resultados de la carga:</div>
-        <p style="color:red;">Error de conexión con el servidor</p>
-      `;
+      console.error('Error en la carga:', err);
+      mostrarError('Error de conexión con el servidor');
     });
+}
+
+function mostrarError(mensaje) {
+  const html = `
+    <div class="resultado-titulo">Resultados de la carga:</div>
+    <p style="color:red;">Error: ${mensaje}</p>
+  `;
+  document.getElementById('resultados').innerHTML = html;
+}
+
+function crearTablaRegistros(registros, incluirOperacion = false) {
+  // Asegurarse de que registros no esté anidado innecesariamente
+  const datos = Array.isArray(registros[0]) ? registros[0] : registros;
+  
+  if (!datos || datos.length === 0) {
+    return '<p class="sin-registros">Ninguno</p>';
   }
 
-  function mostrarResultados(data) {
-    // Ajustamos a lo que tu backend realmente devuelve (SIN cambiarlo):
-    //   sucessfully_loaded_registers
-    //   repaired_registers
-    //   rejected_registers
-    const numCargados = data.sucessfully_loaded_registers || 0;
-    const reparados   = data.repaired_registers || [];
-    const rechazados  = data.rejected_registers || [];
+  const encabezados = `
+    <tr>
+      <th>Fuente de datos</th>
+      <th>Nombre</th>
+      <th>Localidad</th>
+      <th>Motivo del error</th>
+      ${incluirOperacion ? '<th>Operación realizada</th>' : ''}
+    </tr>
+  `;
 
-    let html = `<div class="resultado-titulo">Resultados de la carga:</div>
-                <div class="texto-res">
-                  Número de registros cargados correctamente: <strong>${numCargados}</strong>
-                </div>`;
+  const filas = datos.map(reg => `
+    <tr>
+      <td>${reg.fuente_datos || ''}</td>
+      <td>${reg.nombre || ''}</td>
+      <td>${reg.localidad || ''}</td>
+      <td>${reg.motivo_de_error || ''}</td>
+      ${incluirOperacion ? '<td>Registro reparado</td>' : ''}
+    </tr>
+  `).join('');
 
-    // Registros con errores y reparados
-    html += `<div class="texto-res">
-               <strong>Registros con errores y reparados:</strong>
-             </div>`;
-    if (reparados.length > 0) {
-      html += `<table>
-                <thead>
-                  <tr>
-                    <th>Fuente de datos</th>
-                    <th>Nombre</th>
-                    <th>Localidad</th>
-                    <th>Motivo del error</th>
-                    <th>Operación realizada</th>
-                  </tr>
-                </thead>
-                <tbody>`;
-      reparados.forEach(reg => {
-        html += `<tr>
-                   <td>${reg.fuenteDatos || ''}</td>
-                   <td>${reg.nombre || ''}</td>
-                   <td>${reg.localidad || ''}</td>
-                   <td>${reg.motivoError || ''}</td>
-                   <td>${reg.operacionRealizada || ''}</td>
-                 </tr>`;
-      });
-      html += `</tbody></table>`;
-    } else {
-      html += `<p class="sin-registros">Ninguno</p>`;
-    }
+  return `
+    <table>
+      <thead>${encabezados}</thead>
+      <tbody>${filas}</tbody>
+    </table>
+  `;
+}
 
-    // Registros con errores y rechazados
-    html += `<div class="texto-res">
-               <strong>Registros con errores y rechazados:</strong>
-             </div>`;
-    if (rechazados.length > 0) {
-      html += `<table>
-                <thead>
-                  <tr>
-                    <th>Fuente de datos</th>
-                    <th>Nombre</th>
-                    <th>Localidad</th>
-                    <th>Motivo del error</th>
-                  </tr>
-                </thead>
-                <tbody>`;
-      rechazados.forEach(reg => {
-        html += `<tr>
-                   <td>${reg.fuenteDatos || ''}</td>
-                   <td>${reg.nombre || ''}</td>
-                   <td>${reg.Localidad || ''}</td>
-                   <td>${reg.motivoError || ''}</td>
-                 </tr>`;
-      });
-      html += `</tbody></table>`;
-    } else {
-      html += `<p class="sin-registros">Ninguno</p>`;
-    }
+function mostrarResultados(data) {
+  const {
+    sucessfully_loaded_registers: numCargados = 0,
+    repaired_registers: reparados = [],
+    rejected_registers: rechazados = []
+  } = data;
 
-    document.getElementById('resultados').innerHTML = html;
-  }
+  const html = `
+    <div class="resultado-titulo">Resultados de la carga:</div>
+    <div class="texto-res">
+      Número de registros cargados correctamente: <strong>${numCargados}</strong>
+    </div>
+    
+    <div class="texto-res">
+      <strong>Registros con errores y reparados:</strong>
+    </div>
+    ${crearTablaRegistros(reparados, true)}
+    
+    <div class="texto-res">
+      <strong>Registros con errores y rechazados:</strong>
+    </div>
+    ${crearTablaRegistros(rechazados)}
+  `;
+
+  document.getElementById('resultados').innerHTML = html;
+}
 
   // Botón "Borrar almacén de datos"
   function borrarAlmacen() {
@@ -316,3 +301,5 @@
 </script>
 </body>
 </html>
+
+
