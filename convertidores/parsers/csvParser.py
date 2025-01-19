@@ -145,7 +145,7 @@ def direccion_codigo_postal(latitud, longitud):
     postcode = None
 
     if latitud != "ERROR" and longitud != "ERROR":
-        time.sleep(2)
+        time.sleep(1)
 
         # Define la URL base
         url = f"https://us1.locationiq.com/v1/reverse?key=pk.6fec0eca34494199b1038a312bddbb33&lat={latitud}&lon={longitud}&format=json"
