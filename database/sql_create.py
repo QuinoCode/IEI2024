@@ -73,15 +73,8 @@ class Sql_manager:
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
-        print(query)
-        print(values)
         self.dbcursor.execute(query, values)
         results = self.dbcursor.fetchall()
-
-        if results:
-            print(results)
-        else: 
-            print("No results")
 
         return self.convert_query_into_properly_structurated_json(results)
 

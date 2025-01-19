@@ -3,7 +3,6 @@ import json
 from flask_cors import CORS
 from APIs.carga.carga_service import cargar_dataset_service, borrar_almacen_service
 from flask_cors import CORS
-from carga import carga_service
 
 
 
