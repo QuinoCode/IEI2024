@@ -1,5 +1,6 @@
 from database.sql_create import Sql_manager
 
+#la petición del busqueda_controller se descifra por propiedades y llama a query_monumento
 def query_database(request):
     sql_manager = Sql_manager()
     sql_manager.getSingleton()

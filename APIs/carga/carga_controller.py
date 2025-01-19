@@ -34,6 +34,6 @@ def cargar_dataset():
 def borrar_almacen():
     borrar_almacen_service() #importado base de datos
     return jsonify("{'holi': 1}") ,200
-# It's a post method since it has to wrapp the data inputted by the user in a json and get methods don't allow for a body
+
 if __name__ == '__main__':
     api.run(debug=True, port=5001)

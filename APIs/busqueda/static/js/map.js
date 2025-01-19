@@ -1,11 +1,16 @@
 var map;
 var markers = [];
 
+//vaciar los campos del html
 function cancelarBusqueda() {
-    console.log("cancelar");
+    document.getElementById('localidad').value = "";
+    document.getElementById('codigoPostal').value = "";
+    document.getElementById('tipo').value = "";
+    document.getElementById('provincia').value = "";
 }
 
 function realizarBusqueda() {
+    //obtener datos
     var localidad = document.getElementById('localidad').value;
     var codigo_postal = document.getElementById('codigoPostal').value;
     var provincia = document.getElementById('provincia').value;
@@ -13,6 +18,7 @@ function realizarBusqueda() {
 
     var url = `http://localhost:5000/buscar?`;
 
+    //si existen datos, los añade a url
     if (localidad) {
         url += `localidad=${encodeURIComponent(localidad)}&`;
     }
@@ -26,7 +32,7 @@ function realizarBusqueda() {
         url += `tipo=${encodeURIComponent(tipo)}&`;
     }
 
-    // Remove the trailing '&' if it exists
+    // Quitar las & del final
     if (url.endsWith('&')) {
         url = url.slice(0, -1);
     }
@@ -34,12 +40,14 @@ function realizarBusqueda() {
     fetch(url)
         .then(response => {
             if (!response.ok) {
+                //Si no da 200, limpia la tabla para indicar que no recibión datos
+                clearTable();
                 throw new Error('Network response was not ok');
             }
             return response.json();
-        })  // Parse the response as JSON
+        })  //Sigue con la respuesta como json
         .then(data => {
-            // Call the update function with the response data
+            //llamar a la funcion principal
             update(data);
         })
         .catch(error => {
@@ -47,20 +55,24 @@ function realizarBusqueda() {
         });
 }
 
+//función muerta para limpiar markers
 function clearMarkers(){
     for(var i = 0; i < markers.length; i++){
         this.map.removeLayer(this.markers[i]);
     }
 }
 
+//lógica principal para mostrar la tabla en el html
 function update(data) {
-    // Get the table body element where rows will be added
-    var tableBody = document.getElementById('tablaResultados').getElementsByTagName('tbody')[0];
+    //obtiene la tabla
+    var tableBody = document.querySelector('#tablaResultados tbody');
 
-    // Clear any existing rows in the table
-    tableBody.innerHTML = '';
+    //Limpia la tabla de filas
+    while (tableBody.firstChild){
+        tableBody.removeChild(tableBody.firstChild);
+    }
 
-    // Loop through the JSON response and add each row to the table
+    //Usa el JSON para insertar filas nuevas con los datos recibidos
     data.forEach(item => {
         console.log(item)
         var row = tableBody.insertRow();
@@ -89,26 +101,35 @@ function update(data) {
         var latitude = parseFloat(item.latitud);
         var longitude = parseFloat(item.longitud);
 
-        // Create a marker at the specified latitude and longitude
+        //Crea un marker en el mapa Leaflet
         var marker = L.marker([latitude, longitude]).addTo(map);
         markers.push(marker);
     
-        // Add a popup to the marker that shows the name of the item
+        //Añade un popup con el nombre al marker
         marker.bindPopup(`<b>${item.nombre}</b>`).openPopup();
     });
 }
 
+function clearTable(){
+    //obtiene la tabla
+    var tableBody = document.querySelector('#tablaResultados tbody');
 
-// Initialize Leaflet map
+    //Limpia las filas de la tabla
+    while (tableBody.firstChild){
+        tableBody.removeChild(tableBody.firstChild);
+    }
+}
+
+//Inicializa el mapa Leaflet
 function initializeMap() {
-    // Create a Leaflet map centered in Spain (40.4637, -3.1492)
+    //Crea un mapa centrado en España
     map = L.map('mapContainer').setView([40.4637, -3.1492], 5.8);
 
-    // Add OpenStreetMap tile layer to the map
+    //Usa openstreetmap para visualizar el mapa
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 }
 
-// Call the Leaflet map initialization
+//Al llamar el script por primera vez, genera el mapa
 initializeMap();

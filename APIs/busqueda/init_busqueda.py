@@ -6,13 +6,10 @@ from flask import Flask, render_template
 
 api = Flask(__name__)
 
-# 1) GET /carga -> Muestra la interfaz HTML
+# 1) GET Muestra la interfaz HTML
 @api.get("/")
 def mostrar_interfaz_html():
-    """
-    Muestra el formulario (templates/carga.html) para seleccionar
-    qué fuentes cargar (CV, CLE, EUS...) y un botón "Cargar".
-    """
+    # Usa busqueda.html como template y lo carga al llamar a localhost
     print("holi")
     return render_template("busqueda.html")
 if __name__ == '__main__':
