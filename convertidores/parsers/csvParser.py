@@ -91,10 +91,13 @@ def mappingTipo (json):
         return "Castillo-Fortaleza-Torre"
 
     if any(type in denominacion for type in ["escudo","emblema"]) or clasificacion == "Archiva" or denominacion.startswith("casa") or denominacion.startswith("cruz"):
-        return "Edificio Singular"
+        return "Edificio singular"
 
     if "iglesia" in denominacion:
         return "Iglesia-Ermita"
+    
+    if "monasterio" in denominacion or "convento" in denominacion:
+        return "Monasterio-Convento"
 
     return "Otros"
 
