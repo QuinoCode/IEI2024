@@ -30,8 +30,8 @@ def mappingTipo(item):
         return "Monasterio-Convento"
     elif any(keyword in text for keyword in ["castillo", "fortaleza", "torre", "palacio", "fuerte"]):
         return "Castillo-Fortaleza-Torre"
-     elif any(keyword in text for keyword in ["edificio", "teatro", "molino"]
-        return "Edificio Singular"
+    elif any(keyword in text for keyword in ["edificio", "teatro", "molino"]):
+        return "Edificio singular"
     elif "puente" in text:
         return "Puente"
     else:
