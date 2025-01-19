@@ -24,7 +24,7 @@ def retrieveDataFromAPI():
 def typeCheck(tipo):
     answer = None
     if tipo in("Yacimientos arqueológicos") :
-        return tipo
+        answer = "Yacimiento arqueológico"
     elif tipo in ("Puentes","Puente"):
         answer = "Puente"
     elif tipo in ("Iglesias y Ermitas", "Catedrales", "Sinagogas"):
@@ -34,7 +34,7 @@ def typeCheck(tipo):
     elif tipo in ("Castillos", "Casas Nobles", "Torres"):
         answer = "Castillo-Fortaleza-Torre"
     elif tipo in ("Reales Sitios","Palacio", "Palacios","Casa consistorial"):
-        answer = "Edificio Singular"
+        answer = "Edificio singular"
     else:
         answer = "Otros"
     return answer
