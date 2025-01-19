@@ -145,7 +145,7 @@ def direccion_codigo_postal(latitud, longitud):
     postcode = None
 
     if latitud != "ERROR" and longitud != "ERROR":
-        time.sleep(2)
+        time.sleep(1)
 
         # Define la URL base
         url = f"https://us1.locationiq.com/v1/reverse?key=pk.6fec0eca34494199b1038a312bddbb33&lat={latitud}&lon={longitud}&format=json"
@@ -158,19 +158,31 @@ def direccion_codigo_postal(latitud, longitud):
             data = response.json()
     
             # Extraer la calle
-            road = data.get("address", {}).get("road", "ERROR")
+            road = data.get("address", {}).get("road", "")
+            direccion = road
+            if not road:
+                square = data.get("address", {}).get("square", "")
+                suburb = data.get("address", {}).get("suburb", "")
+                direccion = square + suburb
+
 
             # Extraer el número de vivienda
-            house_number = data.get("address", {}).get("house_number", "ERROR")
+            house_number = data.get("address", {}).get("house_number", "")
 
             # Generar la direccion a partir de la calle y el número de vivienda
-            if road != "ERROR" and house_number != "ERROR":
-                direccion = f"{road} {house_number}"
-            elif road != "ERROR":
-                direccion = road
+            if house_number:
+                direccion += f", {house_number}"
 
             # Extrae el codigo postal
-            postcode = data.get("address", {}).get("postcode", None)
+            postcode = data.get("address", {}).get("postcode", "")
+            if not postcode:
+                city = data.get("address", {}).get("city", "")
+                town = data.get("address", {}).get("town", "")
+                if town:
+                    postcode = alternativePostalCode(town)
+                else:
+                    postcode = alternativePostalCode(city)
+
 
         # Imprimir los datos de entrada para saber si se han generado la direccion y el código postal
         except requests.exceptions.RequestException as e:
@@ -178,6 +190,21 @@ def direccion_codigo_postal(latitud, longitud):
 
     print(f"lat:{latitud} lon:{longitud} -> direccion:{direccion} - postcode:{postcode}")
     return direccion, postcode
+
+def alternativePostalCode(placename):
+    postalCode = ""
+    uncomplete_url_api = "http://api.geonames.org/postalCodeSearchJSON?placename=&maxRows=1&username=QuinoCode"
+    url_api = uncomplete_url_api.replace('placename=', f'placename={placename}')
+    try:
+        response_api = requests.get(url_api)
+        data = response_api.json()
+        if not data.get("status"):
+            postalCode = data.get('postalCodes')[0].get("postalCode")
+    except:
+        print(f"Error al realizar la solicitud:")
+    return postalCode
+
+
 
 # Generar JSON con direccion y código postal a partir de la latitud y longitud
 def obtainPostalCodeAddress(data):
