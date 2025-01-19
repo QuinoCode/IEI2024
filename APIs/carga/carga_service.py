@@ -6,6 +6,10 @@ from convertidores.parsers.xmlParser import main
 from convertidores.parsers.transformar_geocodificacion import main
 from database.sql_create import Sql_manager
 from flask import request
+from database import sql_create
+
+def borrar_estructura_global():
+    return sql_create.Sql_manager.borrar_estructura_global()
 
 def cargar_dataset_service(data):
     diccionario_respuesta = None
