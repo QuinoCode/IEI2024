@@ -16,6 +16,13 @@ class Sql_manager:
         self.conn = sqlite3.connect(self.dbfile)
         self.dbcursor = self.conn.cursor()
 
+    def deleteContentTables(self):
+        self.dbcursor.execute('DELETE FROM Monumento')
+        self.dbcursor.execute('DELETE FROM Localidad')
+        self.dbcursor.execute('DELETE FROM Provincia')
+        self.conn.commit()
+        self.dbcursor.execute('VACUUM')
+
     def createTables(self):
         self.dbcursor.execute('CREATE TABLE Monumento(codigo INTEGER PRIMARY KEY, nombre, tipo, direccion, codigo_postal, longitud, latitud, descripcion, en_localidad)')
         self.dbcursor.execute('CREATE TABLE Localidad(codigo INTEGER PRIMARY KEY, nombre, en_provincia)')
