@@ -4,6 +4,7 @@ from convertidores.parsers import transformar_geocodificacion
 from convertidores.parsers.csvParser import main
 from convertidores.parsers.xmlParser import main
 from convertidores.parsers.transformar_geocodificacion import main
+from database.sql_create import Sql_manager
 from flask import request
 from database import sql_create
 
@@ -72,3 +73,9 @@ def retrieve_CLE():
 def retrieve_EUS():
     eus_loading_feedback = transformar_geocodificacion.main()
     return eus_loading_feedback
+
+def borrar_almacen_service():
+    sql_manager = Sql_manager()
+    sql_manager.getSingleton()
+    sql_manager.deleteContentTables()
+    

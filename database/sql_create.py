@@ -38,6 +38,13 @@ class Sql_manager:
         self.conn = sqlite3.connect(self.dbfile)
         self.dbcursor = self.conn.cursor()
 
+    def deleteContentTables(self):
+        self.dbcursor.execute('DELETE FROM Monumento')
+        self.dbcursor.execute('DELETE FROM Localidad')
+        self.dbcursor.execute('DELETE FROM Provincia')
+        self.conn.commit()
+        self.dbcursor.execute('VACUUM')
+
     def createTables(self):
         self.dbcursor.execute('CREATE TABLE Monumento(codigo INTEGER PRIMARY KEY, nombre, tipo, direccion, codigo_postal, longitud, latitud, descripcion, en_localidad)')
         self.dbcursor.execute('CREATE TABLE Localidad(codigo INTEGER PRIMARY KEY, nombre, en_provincia)')
@@ -66,15 +73,8 @@ class Sql_manager:
         if conditions:
             query += " WHERE " + " AND ".join(conditions)
 
-        print(query)
-        print(values)
         self.dbcursor.execute(query, values)
         results = self.dbcursor.fetchall()
-
-        if results:
-            print(results)
-        else: 
-            print("No results")
 
         return self.convert_query_into_properly_structurated_json(results)
 
@@ -197,8 +197,8 @@ class Sql_manager:
             "repaired_registers": repaired_registers,
             "rejected_registers": rejected_registers,
         }
-        print(f"Sql_create repaired: \n {response_map["repaired_registers"]} \n")
-        print(f"Sql_create rejected: \n {response_map["rejected_registers"]} \n")
+        print(f"Sql_create repaired: \n {response_map['repaired_registers']} \n")
+        print(f"Sql_create rejected: \n {response_map['rejected_registers']} \n")
         return response_map
 
     # Este método es el método lanzadera de la clase, inserta los datos y devuelve el feedback

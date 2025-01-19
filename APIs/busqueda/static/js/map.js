@@ -39,7 +39,6 @@ function realizarBusqueda() {
             return response.json();
         })  // Parse the response as JSON
         .then(data => {
-            clearMarkers();
             // Call the update function with the response data
             update(data);
         })

@@ -1,9 +1,8 @@
 from flask import Flask, jsonify, request
 import json
 from flask_cors import CORS
-from APIs.carga.carga_service import cargar_dataset_service
+from APIs.carga.carga_service import cargar_dataset_service, borrar_almacen_service
 from flask_cors import CORS
-from carga import carga_service
 
 
 
@@ -31,13 +30,10 @@ def cargar_dataset():
 
     return jsonify(diccionario_respuesta), 200
 
-@api.post("/borrar")
-def borrar_estructura_global():
-    if carga_service.borrar_estructura_global():
-        return jsonify({"message": "Almacén de datos borrado exitosamente"}), 200
-    else:
-        return jsonify({"message": "Almacén de datos NO SE HA borrado"}), 500
-
+@api.delete("/borrar")
+def borrar_almacen():
+    borrar_almacen_service() #importado base de datos
+    return jsonify("{'holi': 1}") ,200
 # It's a post method since it has to wrapp the data inputted by the user in a json and get methods don't allow for a body
 if __name__ == '__main__':
     api.run(debug=True, port=5001)

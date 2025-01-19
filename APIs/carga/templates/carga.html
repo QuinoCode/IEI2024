@@ -300,28 +300,34 @@
     }
 
   document.getElementById('resultados').innerHTML = html;
+  document.getElementById('todas').checked = false;
+  document.getElementById('cle').checked   = false;
+  document.getElementById('cv').checked    = false;
+  document.getElementById('eus').checked   = false;
 }
 
   // Botón "Borrar almacén de datos"
   function borrarAlmacen() {
-    // Aquí podrías invocar /borrar en tu backend si existiera
-    //alert("Se ha solicitado el borrado del almacén de datos (no implementado).");
     fetch('http://127.0.0.1:5001/borrar', {
-      method: 'POST',
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Error HTTP! Estado: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      alert("El almacén de datos se ha borrado exitosamente.");
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Error al intentar borrar el almacén de datos.");
-    });
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.error) {
+          mostrarError(data.error);
+        } else {
+          alert("Se ha borrado exitosamente el contenido del almacén de datos");
+        }
+      })
+      .catch(err => {
+        alert("Error interno al borrar el almacén de datos")
+      });
   }
 </script>
 </body>
