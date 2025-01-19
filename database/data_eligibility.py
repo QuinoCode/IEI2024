@@ -110,7 +110,7 @@ def validToInsertProvincia(sql_manager, provincia, source):
     provincia, modificacionUnificaLenguaje = unificaLenguaje(provincia) #Devuelve la provincia estandarizada a los valores esperados (siempre y cuando haga matching con uno de los valores plurilingues esperados)
     provincia, modificacionAñadirAcentoAProvincia = añadirAcentoAProvincia(provincia)
     if (nombreProvinciaInvalido(provincia, source)):
-        return False, provincia, False, ["Rechazado", "La provincia no está correctamente escrita"]
+        return False, provincia, False, ["Rechazado", f"La provincia no es correcta: {provincia}"]
     if (provinciaYaInsertada(sql_manager, provincia)):
         return False, provincia, True, ["Nada", "Nada de nada"]
     mensajeModificación = modificacionUnificaLenguaje + modificacionAñadirAcentoAProvincia

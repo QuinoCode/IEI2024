@@ -161,7 +161,7 @@ class Sql_manager:
                             "fuente_datos": source,
                             "nombre": item["Monumento"]["nombre"].replace("'", ""),
                             "localidad": item["Localidad"],
-                            "motivo_de_error": "Error en el nombre de la provincia",
+                            "motivo_de_error": "La provincia necesitaba estandarización",
                             "operacion_realizada": f"Sustituido {item['Provincia']} por {provincia_corregida}"
                         })
                 if (validLocalidad):
