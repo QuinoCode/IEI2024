@@ -40,7 +40,7 @@ def translate_api():
         response = Response(json.dumps(result, ensure_ascii=False), mimetype='application/json')
         return response, 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 404
 
 """
 Además de devolver el json devolvemos el status code de HTTP
