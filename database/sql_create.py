@@ -176,14 +176,14 @@ class Sql_manager:
                     "localidad": item["Localidad"],
                     "motivo_de_error": reasonRejectedMonument
                 })
-            if (not validLocalidad and not localidadYaInsertada):
+            if (not validLocalidad and not localidadYaInsertada and validMonumento):
                 rejected_registers.append({
                     "fuente_datos": source,
                     "nombre": item["Monumento"]["nombre"].replace("'", ""),
                     "localidad": item["Localidad"],
                     "motivo_de_error": reasonRejectedLocalidad
                 })
-            if (not validProvincia and not provinciaYaInsertada):
+            if (not validProvincia and not provinciaYaInsertada and validLocalidad and validMonumento):
                 if (reasonManagedProvincia[0] == "Rechazado"):
                     rejected_registers.append({
                         "fuente_datos": source,
