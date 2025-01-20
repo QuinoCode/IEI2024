@@ -16,6 +16,20 @@ def retrieveDataFromAPI():
     except Exception as e:
         print(f"[ERROR] No se pudo conectar al API: {e}")
         return []
+def sanitize_address(addr: str) -> str:
+    """
+    Elimina <br/> y <br/>. (con el punto final) de la dirección,
+    y quita espacios sobrantes al final.
+    """
+    if not addr:
+        return ""
+    
+    # Después, por si quedan <br/> sueltas
+    addr = addr.replace("<br/>", "")
+
+    # Por último, hacemos strip() para quitar espacios en blanco sobrantes
+    addr = addr.strip()
+    return addr
 
 def mappingTipo(item):
     """
@@ -56,12 +70,13 @@ def main():
         latitud = item.get("latwgs84")
         longitud = item.get("lonwgs84")
         codigo_postal = item.get("postalCode")
+        direccion_limpia = sanitize_address(item.get("address", ""))
 
         properly_formatted_json.append({
             "Monumento": {
                 "tipo": mappingTipo(item),
                 "nombre": nombre,
-                "direccion": item.get("address", ""),
+                "direccion": direccion_limpia,
                 "codigo_postal": codigo_postal,
                 "longitud": longitud,
                 "latitud": latitud,
@@ -82,4 +97,6 @@ if __name__ == "__main__":
     resultado = main()
     if resultado:
         print(json.dumps(resultado, ensure_ascii=False, indent=4))
+
+
 
