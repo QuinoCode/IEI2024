@@ -43,7 +43,7 @@ def translate_api():
         return jsonify(result), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": str(e)}), 404
 
 """
 Además de devolver el json devolvemos el status code de HTTP

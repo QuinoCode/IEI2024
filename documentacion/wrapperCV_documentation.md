@@ -23,8 +23,8 @@ paths:
                   description: Objeto dinámico representando los datos del CSV
                   additionalProperties:
                     type: string
-        '400':
-          description: Bad request, causado por errores de traducción
+        '404':
+          description: El archivo donde se ubica el dataset no fue encontrado.
           content:
             application/json:
               schema:
@@ -32,5 +32,5 @@ paths:
                 properties:
                   error:
                     type: string
-                    description: Mensaje de error
-                    example: "Archivo no encontrado o formato incorrecto"
+                    description: Mensaje de error.
+                    example: "Archivo datos/entrega2/bienes_inmuebles_interes_cultural.csv no encontrado."
